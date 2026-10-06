@@ -35,7 +35,7 @@ export default function Login() {
 
         <View style={styles.introduction}>
           <Text style={styles.title}>
-            {isLogin ? 'Faça login para continuar' : 'Faça seu cadastro'}
+            {isLogin ? 'Faça login para continuar' : 'Faça seu cadastro veilha'}
           </Text>
           <Text style={styles.description}>
             {isLogin
