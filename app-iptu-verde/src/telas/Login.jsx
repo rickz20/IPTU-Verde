@@ -6,7 +6,7 @@ import AlertIcon from '../../assets/alert-circle.svg';
 import TelaInicial from './TelaInicial';
 
 const PRIMARY_COLOR = '#94B310';
-const INVALID_EMAIL_ERROR = 'E-mail ou senha incorretos. Tente novamente.';
+const INVALID_EMAIL_ERROR = 'E-mail inválido.';
 const EMAIL_REQUIRED_ERROR = 'Digite seu e-mail.';
 const REQUIRED_FIELDS_ERROR = 'Preencha todos os campos.';
 
