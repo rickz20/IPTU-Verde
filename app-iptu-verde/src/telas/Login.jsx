@@ -2,12 +2,77 @@ import { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import AlertIcon from '../../assets/alert-circle.svg';
+import TelaInicial from './TelaInicial';
 
 const PRIMARY_COLOR = '#94B310';
+const INVALID_EMAIL_ERROR = 'E-mail ou senha incorretos. Tente novamente.';
+const EMAIL_REQUIRED_ERROR = 'Digite seu e-mail.';
+const REQUIRED_FIELDS_ERROR = 'Preencha todos os campos.';
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
 
 export default function Login() {
   const [activeTab, setActiveTab] = useState('Login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showHome, setShowHome] = useState(false);
   const isLogin = activeTab === 'Login';
+
+  function validateEmail() {
+    const valid = isValidEmail(email);
+    if (valid) {
+      if (errorMessage !== REQUIRED_FIELDS_ERROR) {
+        setErrorMessage('');
+      }
+      return true;
+    }
+
+    setErrorMessage(email.trim() ? INVALID_EMAIL_ERROR : EMAIL_REQUIRED_ERROR);
+    return false;
+  }
+
+  function handleEmailChange(value) {
+    setEmail(value);
+    if (errorMessage !== REQUIRED_FIELDS_ERROR && isValidEmail(value)) {
+      setErrorMessage('');
+    }
+  }
+
+  function handleSubmit() {
+    const hasEmail = email.trim().length > 0;
+    const hasPassword = password.trim().length > 0;
+    const validEmail = isValidEmail(email);
+
+    if (!hasEmail && !hasPassword) {
+      setErrorMessage(REQUIRED_FIELDS_ERROR);
+      return;
+    }
+    if (!hasEmail) {
+      setErrorMessage(EMAIL_REQUIRED_ERROR);
+      return;
+    }
+    if (!hasPassword) {
+      setErrorMessage(REQUIRED_FIELDS_ERROR);
+      return;
+    }
+    if (!validEmail) {
+      setErrorMessage(INVALID_EMAIL_ERROR);
+      return;
+    }
+
+    setErrorMessage('');
+    if (isLogin) {
+      setShowHome(true);
+    }
+  }
+
+  if (showHome) {
+    return <TelaInicial />;
+  }
 
   return (
     <View style={styles.container}>
@@ -22,7 +87,10 @@ export default function Login() {
               <TouchableOpacity
                 key={tab}
                 style={[styles.tab, isActive && styles.activeTab]}
-                onPress={() => setActiveTab(tab)}
+                onPress={() => {
+                  setActiveTab(tab);
+                  setErrorMessage('');
+                }}
                 activeOpacity={0.8}
               >
                 <Text style={[styles.tabText, isActive && styles.activeTabText]}>
@@ -45,8 +113,27 @@ export default function Login() {
         </View>
 
         <View style={styles.form}>
-          <Input keyboardType="email-address" />
-          <Input secureTextEntry type="password" />
+          {errorMessage && (
+            <View style={styles.errorMessage} accessibilityRole="alert">
+              <AlertIcon width={20} height={20} />
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            </View>
+          )}
+          <Input
+            placeholder="E-mail"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={handleEmailChange}
+            onBlur={validateEmail}
+            hasError={Boolean(errorMessage && errorMessage !== REQUIRED_FIELDS_ERROR)}
+          />
+          <Input
+            placeholder="Senha"
+            secureTextEntry
+            type="password"
+            value={password}
+            onChangeText={setPassword}
+          />
         </View>
 
         {isLogin && (
@@ -55,7 +142,7 @@ export default function Login() {
           </TouchableOpacity>
         )}
 
-        <Button title={isLogin ? 'Entrar' : 'Cadastrar'} />
+        <Button title={isLogin ? 'Entrar' : 'Cadastrar'} onPress={handleSubmit} />
       </View>
     </View>
   );
@@ -80,8 +167,9 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   tabs: {
-    width: '100%',
-    height: 34,
+    width: 265,
+    height: 48,
+    alignSelf: 'center',
     marginBottom: 14,
     flexDirection: 'row',
     borderRadius: 6,
@@ -121,6 +209,22 @@ const styles = StyleSheet.create({
   },
   form: {
     marginBottom: 47,
+  },
+  errorMessage: {
+    minHeight: 40,
+    marginBottom: 10,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 4,
+    backgroundColor: '#FFF5F5',
+  },
+  errorText: {
+    flex: 1,
+    marginLeft: 8,
+    color: '#D32F2F',
+    fontSize: 12,
+    fontFamily: 'Inter_700Bold',
   },
   forgotPassword: {
     alignSelf: 'center',

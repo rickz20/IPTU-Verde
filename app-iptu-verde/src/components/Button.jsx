@@ -2,9 +2,9 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 const PRIMARY_COLOR = '#94B310';
 
-export default function Button({ title }) {
+export default function Button({ title, onPress }) {
   return (
-    <TouchableOpacity style={styles.button} activeOpacity={0.8}>
+    <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.8}>
       <Text style={styles.text}>{title}</Text>
     </TouchableOpacity>
   );
@@ -12,8 +12,8 @@ export default function Button({ title }) {
 
 const styles = StyleSheet.create({
   button: {
-    width: '76%',
-    height: 36,
+    width: 280,
+    height: 56,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 20,
     fontFamily: 'Inter_700Bold',
   },
 });

@@ -10,12 +10,16 @@ export default function Input({
   secureTextEntry = false,
   keyboardType = 'default',
   type = 'email',
+  value,
+  onChangeText,
+  onBlur,
+  hasError = false,
 }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const isPassword = secureTextEntry || type === 'password';
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, hasError && styles.containerError]}>
       {isPassword ? <LockIcon width={20} height={20} /> : <MailIcon width={20} height={20} />}
       <TextInput
         style={styles.input}
@@ -24,6 +28,9 @@ export default function Input({
         secureTextEntry={isPassword && !isPasswordVisible}
         keyboardType={keyboardType}
         autoCapitalize="none"
+        value={value}
+        onChangeText={onChangeText}
+        onBlur={onBlur}
         underlineColorAndroid="transparent"
       />
       {isPassword && (
@@ -51,6 +58,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 11,
     backgroundColor: '#F5F5F5',
+  },
+  containerError: {
+    borderWidth: 1,
+    borderColor: '#D32F2F',
   },
   input: {
     flex: 1,
