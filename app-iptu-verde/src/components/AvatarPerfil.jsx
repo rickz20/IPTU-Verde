@@ -1,123 +1,82 @@
+import { Pressable, StyleSheet, View } from 'react-native';
+import Svg, { Circle, Path } from 'react-native-svg';
+import { CORES } from './telaInicial/tema';
 
-import React from 'react';
-
-// Importando os componentes de interface
-import {
-  Pressable,
-  StyleSheet,
-  View,
-} from 'react-native';
-
-// Importando os recursos para desenhar o avatar
-import Svg, {
-  Circle,
-  Path,
-  Defs,
-  ClipPath,
-  G,
-} from 'react-native-svg';
-
-// Importando o componente reutilizável de ícones
-import Icone from './Icone';
-
-// Criando o componente reutilizável do avatar
-export default function AvatarPerfil({ onEditar }) {
-
-  // Renderizando a estrutura do avatar
+export default function AvatarPerfil({ onEditar = () => {} }) {
   return (
     <View style={styles.container}>
-
-      {/* Desenhando o avatar em formato vetorial */}
-      <Svg
-        width={144}
-        height={144}
-        viewBox="0 0 144 144"
-      >
-
-        {/* Definindo a máscara circular */}
-        <Defs>
-          <ClipPath id="recorteAvatarPerfil">
-            <Circle cx="72" cy="72" r="72" />
-          </ClipPath>
-        </Defs>
-
-        {/* Limitando os desenhos à área circular */}
-        <G clipPath="url(#recorteAvatarPerfil)">
-
-          {/* Desenhando o fundo verde */}
+      <View style={styles.avatar}>
+        <Svg width="100%" height="100%" viewBox="0 0 140 140">
+          <Circle cx="70" cy="70" r="70" fill={CORES.verde} />
           <Circle
-            cx="72"
-            cy="72"
-            r="72"
-            fill="#95BA0A"
-          />
-
-          {/* Desenhando a cabeça do usuário */}
-          <Circle
-            cx="72"
-            cy="57"
+            cx="70"
+            cy="55"
             r="18"
             fill="none"
-            stroke="#6D8C09"
-            strokeWidth={6}
+            stroke={CORES.verdeEscuro}
+            strokeWidth="8"
           />
-
-          {/* Desenhando o corpo do usuário */}
           <Path
-            d="M21 126c6-27 24-36 51-36s45 9 51 36"
+            d="M24 126c8-24 26-37 46-37s38 13 46 37"
             fill="none"
-            stroke="#6D8C09"
-            strokeWidth={6}
+            stroke={CORES.verdeEscuro}
+            strokeWidth="8"
+            strokeLinecap="round"
           />
+        </Svg>
+      </View>
 
-        </G>
-      </Svg>
-
-      {/* Posicionando o botão de edição */}
       <Pressable
         style={styles.botaoEditar}
         onPress={onEditar}
-        disabled={!onEditar}
         accessibilityRole="button"
-        accessibilityLabel="Editar foto de perfil"
+        accessibilityLabel="Editar foto do perfil"
       >
-
-        {/* Renderizando o ícone de edição */}
-        <Icone
-          tipo="editar"
-          tamanho={19}
-          cor="#292929"
-        />
-
+        <Svg width={18} height={18} viewBox="0 0 24 24">
+          <Path
+            d="m4 16.5-.8 4.3 4.3-.8L19.8 7.7a2.1 2.1 0 0 0-3-3L4 16.5Z"
+            fill="none"
+            stroke={CORES.texto}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <Path
+            d="m15.5 6.5 3 3"
+            fill="none"
+            stroke={CORES.texto}
+            strokeWidth="2"
+          />
+        </Svg>
       </Pressable>
-
     </View>
   );
 }
 
-// Definindo os estilos do avatar
 const styles = StyleSheet.create({
-
-  // Dimensionando o avatar
   container: {
-    width: 144,
-    height: 144,
+    width: 140,
+    height: 140,
+    alignSelf: 'center',
     position: 'relative',
   },
-
-  // Posicionando o botão sobre o avatar
+  avatar: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    overflow: 'hidden',
+  },
   botaoEditar: {
     position: 'absolute',
     right: 0,
-    bottom: -2,
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: '#FFFFFF',
+    bottom: 0,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     borderWidth: 1,
-    borderColor: '#E7E7E7',
+    borderColor: '#E2E2E2',
+    backgroundColor: CORES.branco,
     alignItems: 'center',
     justifyContent: 'center',
   },
-
 });

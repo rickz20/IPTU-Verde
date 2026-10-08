@@ -1,173 +1,97 @@
-
-import React from 'react';
-
-// Importando os recursos de interface
+import { useState } from 'react';
 import {
+  SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-
-// Importando o componente de área segura
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-// Importando os componentes reutilizáveis
-import BotaoVoltar from '../components/BotaoVoltar';
 import AvatarPerfil from '../components/AvatarPerfil';
 import OpcaoPerfil from '../components/OpcaoPerfil';
+import MenuInferior from '../components/telaInicial/MenuInferior';
+import { CORES } from '../components/telaInicial/tema';
 
-// Criando a tela principal de Perfil
-export default function TelaPerfil({
-  nomeUsuario = 'Fulano da Silva',
-  onVoltar,
-  onEditarFoto,
-  onMeusDados,
-  onMeusImoveis,
-  onSeguranca,
-  onAjuda,
-  onAlterarSenha,
-  onSair,
-}) {
+const OPCOES_PERFIL = [
+  { id: 'meus-dados', titulo: 'Meus dados', icone: 'usuario' },
+  { id: 'meus-imoveis', titulo: 'Meus imóveis', icone: 'imoveis' },
+  {
+    id: 'seguranca-privacidade',
+    titulo: 'Segurança e privacidade',
+    icone: 'seguranca',
+  },
+  { id: 'ajuda-suporte', titulo: 'Ajuda e suporte', icone: 'ajuda' },
+  { id: 'alterar-senha', titulo: 'Alterar senha', icone: 'senha', destaque: true },
+  { id: 'sair', titulo: 'Sair', icone: 'sair', destaque: true },
+];
 
-  // Organizando as opções exibidas na tela
-  const opcoes = [
-    {
-      titulo: 'Meus dados',
-      icone: 'usuario',
-      onPress: onMeusDados,
-    },
-    {
-      titulo: 'Meus imóveis',
-      icone: 'imoveis',
-      onPress: onMeusImoveis,
-    },
-    {
-      titulo: 'Segurança e privacidade',
-      icone: 'seguranca',
-      onPress: onSeguranca,
-    },
-    {
-      titulo: 'Ajuda e suporte',
-      icone: 'ajuda',
-      onPress: onAjuda,
-    },
-    {
-      titulo: 'Alterar senha',
-      icone: 'senha',
-      destaque: true,
-      onPress: onAlterarSenha,
-    },
-    {
-      titulo: 'Sair',
-      icone: 'sair',
-      destaque: true,
-      onPress: onSair,
-    },
-  ];
+export default function TelaPerfil({ onSelecionarAba }) {
+  const [abaSelecionada, setAbaSelecionada] = useState('perfil');
 
-  // Renderizando a interface do Perfil
+  function selecionarAba(aba) {
+    setAbaSelecionada(aba);
+    onSelecionarAba?.(aba);
+  }
+
   return (
-    <SafeAreaView style={styles.tela}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor={CORES.branco} />
 
-      {/* Permitindo a rolagem em telas menores */}
       <ScrollView
-        style={styles.rolagem}
+        style={styles.scroll}
         contentContainerStyle={styles.conteudo}
         showsVerticalScrollIndicator={false}
       >
-
-        {/* Limitando a largura do conteúdo */}
-        <View style={styles.largura}>
-
-          {/* Renderizando o botão de voltar */}
-          <BotaoVoltar onPress={onVoltar} />
-
-          {/* Organizando as informações do usuário */}
-          <View style={styles.perfil}>
-
-            {/* Renderizando o avatar */}
-            <AvatarPerfil onEditar={onEditarFoto} />
-
-            {/* Exibindo o nome do usuário */}
-            <Text style={styles.nomeUsuario}>
-              {nomeUsuario}
-            </Text>
-
-          </View>
-
-          {/* Organizando a lista de opções */}
-          <View style={styles.listaOpcoes}>
-
-            {/* Renderizando os cards automaticamente */}
-            {opcoes.map((opcao) => (
-              <OpcaoPerfil
-                key={opcao.titulo}
-                titulo={opcao.titulo}
-                icone={opcao.icone}
-                destaque={opcao.destaque}
-                onPress={opcao.onPress}
-              />
-            ))}
-
-          </View>
-
+        <View style={styles.perfil}>
+          <AvatarPerfil />
+          <Text style={styles.nome}>Fulano da Silva</Text>
         </View>
 
+        <View style={styles.opcoes}>
+          {OPCOES_PERFIL.map((opcao) => (
+            <OpcaoPerfil
+              key={opcao.id}
+              titulo={opcao.titulo}
+              icone={opcao.icone}
+              destaque={opcao.destaque}
+            />
+          ))}
+        </View>
       </ScrollView>
 
+      <MenuInferior
+        selecionado={abaSelecionada}
+        onSelecionar={selecionarAba}
+      />
     </SafeAreaView>
   );
 }
 
-// Definindo os estilos específicos da tela
 const styles = StyleSheet.create({
-
-  // Configurando o fundo branco
-  tela: {
+  container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: CORES.branco,
   },
-
-  // Permitindo a rolagem vertical
-  rolagem: {
+  scroll: {
     flex: 1,
   },
-
-  // Organizando o espaçamento do conteúdo
   conteudo: {
-    flexGrow: 1,
-    paddingTop: 8,
-    paddingBottom: 36,
-    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 18,
+    paddingBottom: 24,
   },
-
-  // Limitando a largura em telas maiores
-  largura: {
-    width: '100%',
-    maxWidth: 450,
-    paddingHorizontal: 26,
-  },
-
-  // Centralizando o avatar e o nome
   perfil: {
-    marginTop: 54,
     alignItems: 'center',
+    marginTop: 96,
+    marginBottom: 64,
   },
-
-  // Formatando o nome do usuário
-  nomeUsuario: {
-    marginTop: 20,
+  nome: {
+    marginTop: 16,
+    color: CORES.texto,
+    fontSize: 16,
     fontFamily: 'Alexandria_700Bold',
-    fontSize: 18,
-    color: '#292929',
-    textAlign: 'center',
   },
-
-  // Organizando os cards verticalmente
-  listaOpcoes: {
-    marginTop: 65,
-    gap: 9,
+  opcoes: {
+    gap: 8,
   },
-
 });

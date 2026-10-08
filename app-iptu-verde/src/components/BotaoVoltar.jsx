@@ -1,58 +1,32 @@
+import { Pressable, StyleSheet, Text } from 'react-native';
+import { CORES } from './telaInicial/tema';
 
-import React from 'react';
-
-// Importando os recursos de interface
-import {
-  Pressable,
-  StyleSheet,
-} from 'react-native';
-
-// Importando o componente reutilizável de ícones
-import Icone from './Icone';
-
-// Criando o botão reutilizável de voltar
-export default function BotaoVoltar({ onPress }) {
-
-  // Renderizando a estrutura do botão
+export default function BotaoVoltar({ onPress, accessibilityLabel = 'Voltar' }) {
   return (
     <Pressable
+      style={styles.botao}
       onPress={onPress}
-      disabled={!onPress}
       accessibilityRole="button"
-      accessibilityLabel="Voltar"
-      style={({ pressed }) => [
-        styles.botao,
-        pressed && styles.pressionado,
-      ]}
+      accessibilityLabel={accessibilityLabel}
     >
-
-      {/* Renderizando a seta branca */}
-      <Icone
-        tipo="voltar"
-        tamanho={28}
-        cor="#FFFFFF"
-      />
-
+      <Text style={styles.seta}>←</Text>
     </Pressable>
   );
 }
 
-// Definindo os estilos do botão
 const styles = StyleSheet.create({
-
-  // Criando o formato circular amarelo
   botao: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#DDA11F',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: CORES.amarelo,
     alignItems: 'center',
     justifyContent: 'center',
   },
-
-  // Aplicando feedback visual ao pressionar
-  pressionado: {
-    opacity: 0.7,
+  seta: {
+    color: CORES.branco,
+    fontSize: 24,
+    lineHeight: 28,
+    fontFamily: 'Inter_400Regular',
   },
-
 });

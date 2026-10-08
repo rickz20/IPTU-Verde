@@ -1,109 +1,55 @@
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import IconePerfil from './IconePerfil';
+import { CORES } from './telaInicial/tema';
 
-import React from 'react';
-
-// Importando os componentes de interface
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-
-// Importando o componente reutilizável de ícones
-import Icone from './Icone';
-
-// Criando o componente reutilizável das opções
 export default function OpcaoPerfil({
   titulo,
   icone,
-  onPress,
   destaque = false,
+  onPress = () => {},
 }) {
+  const corTexto = destaque ? '#D65252' : CORES.texto;
+  const corIcone = destaque ? '#D65252' : '#918D83';
 
-  // Definindo a cor do ícone conforme o destaque
-  const corIcone = destaque
-    ? '#C75F60'
-    : '#96938D';
-
-  // Renderizando a estrutura do card
   return (
     <Pressable
+      style={styles.opcao}
       onPress={onPress}
-      disabled={!onPress}
       accessibilityRole="button"
       accessibilityLabel={titulo}
-      style={({ pressed }) => [
-        styles.card,
-        pressed && styles.pressionado,
-      ]}
     >
-
-      {/* Posicionando o ícone à esquerda */}
-      <View style={styles.areaIcone}>
-        <Icone
-          tipo={icone}
-          tamanho={22}
-          cor={corIcone}
-        />
+      <IconePerfil nome={icone} cor={corIcone} />
+      <Text style={[styles.titulo, { color: corTexto }]}>{titulo}</Text>
+      <View style={styles.seta}>
+        <Text style={styles.caractereSeta}>›</Text>
       </View>
-
-      {/* Exibindo o título da opção */}
-      <Text
-        style={[
-          styles.titulo,
-          destaque && styles.tituloDestaque,
-        ]}
-      >
-        {titulo}
-      </Text>
-
-      {/* Renderizando a seta indicativa */}
-      <Icone
-        tipo="seta"
-        tamanho={20}
-        cor="#BDBDB8"
-      />
-
     </Pressable>
   );
 }
 
-// Definindo os estilos dos cards
 const styles = StyleSheet.create({
-
-  // Criando o card com fundo cinza
-  card: {
-    minHeight: 62,
+  opcao: {
+    minHeight: 58,
+    paddingHorizontal: 18,
     borderRadius: 17,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: CORES.cinza,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
+    gap: 16,
   },
-
-  // Aplicando feedback visual ao pressionar
-  pressionado: {
-    opacity: 0.7,
-  },
-
-  // Reservando espaço para o ícone
-  areaIcone: {
-    width: 40,
-    alignItems: 'flex-start',
-  },
-
-  // Formatando o título da opção
   titulo: {
     flex: 1,
+    fontSize: 14,
     fontFamily: 'Inter_400Regular',
-    fontSize: 16,
-    color: '#292929',
   },
-
-  // Destacando as ações em vermelho
-  tituloDestaque: {
-    color: '#C75F60',
+  seta: {
+    width: 16,
+    alignItems: 'flex-end',
   },
-
+  caractereSeta: {
+    color: '#C6C4BF',
+    fontSize: 28,
+    lineHeight: 30,
+    fontFamily: 'Inter_400Regular',
+  },
 });

@@ -1,0 +1,38 @@
+export const meusAgendamentos = [
+  {
+    id: '1',
+    ponto: 'Ponto de coleta 1',
+    endereco: 'Rua Lauro Ramos Duarte 103, Centro',
+    data: '11/10/2026',
+    horario: 'De 10:00 às 10:30',
+    modalidade: 'Entrega no ponto de coleta',
+    materiais: 'papel, metal',
+  },
+  {
+    id: '2',
+    ponto: 'Ponto de coleta 1',
+    endereco: 'Rua Lauro Ramos Duarte 103, Centro',
+    data: '14/10/2026',
+    horario: 'De 10:00 às 10:30',
+    modalidade: 'Entrega no ponto de coleta',
+    materiais: 'papel, metal, vidro',
+  },
+  {
+    id: '3',
+    ponto: 'Ponto de coleta 1',
+    endereco: 'Rua Lauro Ramos Duarte 103, Centro',
+    data: '11/10/2026',
+    horario: 'De 10:00 às 10:30',
+    modalidade: 'Coleta em domicílio',
+    materiais: 'papel, metal',
+  },
+  {
+    id: '4',
+    ponto: 'Ponto de coleta 1',
+    endereco: 'Rua Lauro Ramos Duarte 103, Centro',
+    data: '14/10/2026',
+    horario: 'De 10:00 às 10:30',
+    modalidade: 'Entrega no ponto de coleta',
+    materiais: 'papel, metal, vidro',
+  },
+];
