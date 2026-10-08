@@ -16,6 +16,8 @@ export default function InputCadastro({
   autoCapitalize = 'sentences',
   secureTextEntry = false,
   hasError = false,
+  textContentType,
+  containerStyle,
 }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -25,6 +27,7 @@ export default function InputCadastro({
         styles.container,
         secureTextEntry && styles.passwordContainer,
         hasError && styles.containerError,
+        containerStyle,
       ]}
     >
       <TextInput
@@ -36,6 +39,7 @@ export default function InputCadastro({
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
         secureTextEntry={secureTextEntry && !isPasswordVisible}
+        textContentType={textContentType}
         autoCorrect={false}
       />
       {secureTextEntry && (

@@ -4,8 +4,8 @@ import React from 'react';
 // Importando os recursos de navegação
 import { useRouter } from 'expo-router';
 
-// Importando a estrutura reutilizável
-import TelaEmBranco from '../../telas/TelaEmBranco';
+// Importando a tela de dados do imóvel
+import TelaMeusImoveis from '../../telas/TelaMeusImoveis';
 
 // Criando a rota de Meus imóveis
 export default function MeusImoveis() {
@@ -13,10 +13,9 @@ export default function MeusImoveis() {
   // Obtendo o controlador de navegação
   const router = useRouter();
 
-  // Renderizando a tela provisória
+  // Renderizando os dados do imóvel
   return (
-    <TelaEmBranco
-      titulo="Meus imóveis"
+    <TelaMeusImoveis
       onVoltar={() => router.replace('/perfil')}
     />
   );

@@ -4,8 +4,8 @@ import React from 'react';
 // Importando os recursos de navegação
 import { useRouter } from 'expo-router';
 
-// Importando a estrutura reutilizável
-import TelaEmBranco from '../../telas/TelaEmBranco';
+// Importando a tela de dados pessoais
+import TelaMeusDados from '../../telas/TelaMeusDados';
 
 // Criando a rota de Meus dados
 export default function MeusDados() {
@@ -13,10 +13,9 @@ export default function MeusDados() {
   // Obtendo o controlador de navegação
   const router = useRouter();
 
-  // Renderizando a tela provisória
+  // Renderizando os dados pessoais
   return (
-    <TelaEmBranco
-      titulo="Meus dados"
+    <TelaMeusDados
       onVoltar={() => router.replace('/perfil')}
     />
   );
