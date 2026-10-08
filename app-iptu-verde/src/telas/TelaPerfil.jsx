@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   Modal,
-  Image,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -10,7 +9,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import Svg, { Path } from 'react-native-svg';
 import AvatarPerfil from '../components/AvatarPerfil';
 import OpcaoPerfil from '../components/OpcaoPerfil';
 import MenuInferior from '../components/telaInicial/MenuInferior';
@@ -34,19 +33,34 @@ export default function TelaPerfil({
   onMeusDados,
   onMeusImoveis,
   onAlterarSenha,
+  onSair,
 }) {
-  const router = useRouter();
   const [abaSelecionada, setAbaSelecionada] = useState('perfil');
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [mostrarConfirmacaoSaida, setMostrarConfirmacaoSaida] = useState(false);
 
   function selecionarAba(aba) {
     setAbaSelecionada(aba);
     onSelecionarAba?.(aba);
   }
 
-  function handleSair() {
-    setShowLogoutModal(false);
-    router.replace('/');
+  function selecionarOpcao(id) {
+    const acoes = {
+      'meus-dados': onMeusDados,
+      'meus-imoveis': onMeusImoveis,
+      'alterar-senha': onAlterarSenha,
+    };
+
+    if (id === 'sair') {
+      setMostrarConfirmacaoSaida(true);
+      return;
+    }
+
+    acoes[id]?.();
+  }
+
+  function confirmarSaida() {
+    setMostrarConfirmacaoSaida(false);
+    onSair?.();
   }
 
   return (
@@ -70,17 +84,7 @@ export default function TelaPerfil({
               titulo={opcao.titulo}
               icone={opcao.icone}
               destaque={opcao.destaque}
-              onPress={
-                opcao.id === 'meus-dados'
-                  ? onMeusDados
-                  : opcao.id === 'meus-imoveis'
-                    ? onMeusImoveis
-                    : opcao.id === 'alterar-senha'
-                      ? onAlterarSenha
-                    : opcao.id === 'sair'
-                      ? () => setShowLogoutModal(true)
-                      : undefined
-              }
+              onPress={() => selecionarOpcao(opcao.id)}
             />
           ))}
         </View>
@@ -91,36 +95,50 @@ export default function TelaPerfil({
         onSelecionar={selecionarAba}
       />
 
-      <Modal transparent visible={showLogoutModal} animationType="fade">
+      <Modal
+        transparent
+        visible={mostrarConfirmacaoSaida}
+        animationType="fade"
+        onRequestClose={() => setMostrarConfirmacaoSaida(false)}
+      >
         <Pressable
-          style={styles.modalBackdrop}
-          onPress={() => setShowLogoutModal(false)}
+          style={styles.modalFundo}
+          onPress={() => setMostrarConfirmacaoSaida(false)}
         >
-          <Pressable style={styles.modalCard} onPress={() => {}}>
-            <View style={styles.modalIcon}>
-              <Image
-                source={require('../../assets/Log out.png')}
-                style={styles.modalIconImage}
-                resizeMode="contain"
-                accessibilityLabel="Sair da conta"
-              />
-            </View>
-
-            <Text style={styles.modalTitle}>Sair da conta?</Text>
-            <Text style={styles.modalText}>
-              {"Tem certeza de que deseja sair da sua conta?\nVocê poderá voltar sempre que quiser."}
+          <Pressable style={styles.modalCartao} onPress={() => {}}>
+            <Svg
+              width={36}
+              height={36}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke={CORES.verdeEscuro}
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={styles.modalIcone}
+              accessibilityLabel="Sair da conta"
+            >
+              <Path d="M10 5H5v14h5" />
+              <Path d="m13 8 4 4-4 4M17 12H9" />
+            </Svg>
+            <Text style={styles.modalTitulo}>Sair da conta?</Text>
+            <Text style={styles.modalDescricao}>
+              Tem certeza de que deseja sair da sua conta?
             </Text>
-
-            <View style={styles.modalActions}>
+            <View style={styles.modalAcoes}>
               <Pressable
-                style={styles.primaryButton}
-                onPress={() => setShowLogoutModal(false)}
+                style={styles.modalBotao}
+                onPress={() => setMostrarConfirmacaoSaida(false)}
+                accessibilityRole="button"
               >
-                <Text style={styles.primaryButtonText}>Cancelar</Text>
+                <Text style={styles.modalTextoBotao}>Cancelar</Text>
               </Pressable>
-
-              <Pressable style={styles.primaryButton} onPress={handleSair}>
-                <Text style={styles.primaryButtonText}>Sair</Text>
+              <Pressable
+                style={styles.modalBotao}
+                onPress={confirmarSaida}
+                accessibilityRole="button"
+              >
+                <Text style={styles.modalTextoBotao}>Sair</Text>
               </Pressable>
             </View>
           </Pressable>
@@ -157,55 +175,47 @@ const styles = StyleSheet.create({
   opcoes: {
     gap: 8,
   },
-  modalBackdrop: {
+  modalFundo: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(13, 13, 13, 0.25)',
+    paddingHorizontal: 24,
+    backgroundColor: 'rgba(13, 13, 13, 0.36)',
   },
-  modalCard: {
-    width: '82%',
+  modalCartao: {
+    width: '100%',
     maxWidth: 380,
-    backgroundColor: CORES.branco,
-    borderRadius: 18,
-    paddingHorizontal: 22,
+    alignItems: 'center',
+    paddingHorizontal: 20,
     paddingTop: 22,
     paddingBottom: 18,
-    alignItems: 'center',
+    borderRadius: 18,
+    backgroundColor: CORES.branco,
   },
-  modalIcon: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    backgroundColor: '#F4F0E8',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 18,
-  },
-  modalIconImage: {
+  modalIcone: {
     width: 36,
     height: 36,
+    marginBottom: 14,
   },
-  modalTitle: {
-    fontSize: 22,
+  modalTitulo: {
     color: CORES.texto,
+    fontSize: 18,
     fontFamily: 'Alexandria_700Bold',
-    marginBottom: 8,
+    marginBottom: 5,
   },
-  modalText: {
-    color: CORES.texto,
+  modalDescricao: {
+    color: CORES.textoSecundario,
     fontSize: 12,
-    lineHeight: 19,
-    textAlign: 'center',
     fontFamily: 'Inter_400Regular',
-    marginBottom: 20,
+    textAlign: 'center',
+    marginBottom: 18,
   },
-  modalActions: {
+  modalAcoes: {
     width: '100%',
     flexDirection: 'row',
-    gap: 14,
+    gap: 12,
   },
-  primaryButton: {
+  modalBotao: {
     flex: 1,
     height: 42,
     borderRadius: 12,
@@ -213,9 +223,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  primaryButtonText: {
+  modalTextoBotao: {
     color: CORES.branco,
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Inter_700Bold',
   },
 });

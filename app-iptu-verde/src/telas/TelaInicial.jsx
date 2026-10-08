@@ -25,7 +25,7 @@ import TelaAlterarSenha from './TelaAlterarSenha';
 import { coletas } from '../components/telaInicial/dados';
 import { CORES } from '../components/telaInicial/tema';
 
-export default function TelaInicial() {
+export default function TelaInicial({ onSair }) {
   const [abaSelecionada, setAbaSelecionada] = useState('inicio');
   const [telaAtual, setTelaAtual] = useState('inicio');
 
@@ -47,12 +47,9 @@ export default function TelaInicial() {
         onMeusDados={() => setTelaAtual('meus-dados')}
         onMeusImoveis={() => setTelaAtual('meus-imoveis')}
         onAlterarSenha={() => setTelaAtual('alterar-senha')}
+        onSair={onSair}
       />
     );
-  }
-
-  if (telaAtual === 'alterar-senha') {
-    return <TelaAlterarSenha onVoltar={() => setTelaAtual('perfil')} />;
   }
 
   if (telaAtual === 'meus-dados') {
@@ -61,6 +58,10 @@ export default function TelaInicial() {
 
   if (telaAtual === 'meus-imoveis') {
     return <TelaMeusImoveis onVoltar={() => setTelaAtual('perfil')} />;
+  }
+
+  if (telaAtual === 'alterar-senha') {
+    return <TelaAlterarSenha onVoltar={() => setTelaAtual('perfil')} />;
   }
 
   if (telaAtual === 'meus-agendamentos') {

@@ -1,5 +1,4 @@
 import {
-  Image,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -7,55 +6,50 @@ import {
   Text,
   View,
 } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 import BotaoVoltar from '../components/BotaoVoltar';
-import IconePerfil from '../components/IconePerfil';
-import InformacaoPessoal from '../components/perfil/InformacaoPessoal';
 import { CORES } from '../components/telaInicial/tema';
 
 const DADOS_IMOVEL = [
-  { titulo: 'Rua', valor: 'Cecílio Alencar' },
-  { titulo: 'Número', valor: '********00-05' },
-  { titulo: 'Bairro', valor: 'Casado' },
-  { titulo: 'CEP', valor: 'emaildefulano@gmail.com' },
+  ['Endereço', 'Rua Exemplo, 123'],
+  ['Bairro', 'Centro'],
+  ['Cidade', 'Quixadá - CE'],
+  ['Inscrição imobiliária', '000000000'],
+  ['Tipo de imóvel', 'Residencial'],
 ];
 
 export default function TelaMeusImoveis({ onVoltar }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={CORES.branco} />
-
-      <ScrollView
-        contentContainerStyle={styles.conteudo}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.conteudo}>
         <View style={styles.cabecalho}>
           <BotaoVoltar onPress={onVoltar} />
-          <Text style={styles.tituloCabecalho}>Meus imóveis</Text>
+          <Text style={styles.titulo}>Meus imóveis</Text>
         </View>
 
-        <View style={styles.secao}>
-          <View style={styles.tituloSecao}>
-            <IconePerfil nome="casa" cor={CORES.texto} tamanho={20} />
-            <Text style={styles.textoTituloSecao}>Dados do imóvel</Text>
-          </View>
-
-          <View style={styles.listaDados}>
-            {DADOS_IMOVEL.map((dado) => (
-              <InformacaoPessoal
-                key={dado.titulo}
-                titulo={dado.titulo}
-                valor={dado.valor}
+        <View style={styles.cartao}>
+          <View style={styles.iconeCasa}>
+            <Svg width={28} height={28} viewBox="0 0 24 24">
+              <Path
+                d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z"
+                fill="none"
+                stroke={CORES.verdeEscuro}
+                strokeWidth={1.8}
+                strokeLinejoin="round"
               />
+            </Svg>
+          </View>
+          <Text style={styles.tituloCartao}>Imóvel cadastrado</Text>
+          <View style={styles.lista}>
+            {DADOS_IMOVEL.map(([rotulo, valor]) => (
+              <View key={rotulo} style={styles.item}>
+                <Text style={styles.rotulo}>{rotulo}</Text>
+                <Text style={styles.valor}>{valor}</Text>
+              </View>
             ))}
           </View>
         </View>
-
-        <Image
-          source={require('../../assets/logo-iptu-verde.png')}
-          style={styles.logo}
-          resizeMode="contain"
-          accessibilityLabel="IPTU Verde Quixadá"
-        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -68,43 +62,58 @@ const styles = StyleSheet.create({
   },
   conteudo: {
     flexGrow: 1,
-    paddingHorizontal: 18,
-    paddingTop: 28,
-    paddingBottom: 24,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 28,
   },
   cabecalho: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
   },
-  tituloCabecalho: {
+  titulo: {
     color: CORES.texto,
     fontSize: 18,
     fontFamily: 'Alexandria_700Bold',
   },
-  secao: {
-    marginTop: 38,
-    marginLeft: 10,
+  cartao: {
+    marginTop: 34,
+    padding: 18,
+    borderRadius: 16,
+    backgroundColor: CORES.cinza,
   },
-  tituloSecao: {
-    flexDirection: 'row',
+  iconeCasa: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: CORES.branco,
     alignItems: 'center',
-    gap: 10,
+    justifyContent: 'center',
   },
-  textoTituloSecao: {
+  tituloCartao: {
+    marginTop: 14,
+    marginBottom: 16,
     color: CORES.texto,
-    fontSize: 17,
+    fontSize: 16,
     fontFamily: 'Alexandria_700Bold',
   },
-  listaDados: {
-    marginTop: 8,
-    marginLeft: 24,
-    gap: 8,
+  lista: {
+    gap: 14,
   },
-  logo: {
-    width: 92,
-    height: 50,
-    alignSelf: 'center',
-    marginTop: 'auto',
+  item: {
+    borderBottomWidth: 1,
+    borderBottomColor: CORES.cinzaMedio,
+    paddingBottom: 10,
+  },
+  rotulo: {
+    color: CORES.textoSecundario,
+    fontSize: 11,
+    fontFamily: 'Inter_400Regular',
+  },
+  valor: {
+    marginTop: 4,
+    color: CORES.texto,
+    fontSize: 14,
+    fontFamily: 'Inter_700Bold',
   },
 });

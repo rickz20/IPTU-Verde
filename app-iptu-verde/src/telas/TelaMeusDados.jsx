@@ -1,5 +1,4 @@
 import {
-  Image,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -8,55 +7,34 @@ import {
   View,
 } from 'react-native';
 import BotaoVoltar from '../components/BotaoVoltar';
-import IconePerfil from '../components/IconePerfil';
-import InformacaoPessoal from '../components/perfil/InformacaoPessoal';
 import { CORES } from '../components/telaInicial/tema';
 
 const DADOS_PESSOAIS = [
-  { titulo: 'Nome', valor: 'Cecílio Alencar' },
-  { titulo: 'CPF', valor: '*********00-05' },
-  { titulo: 'Estado civil', valor: 'Casado' },
-  { titulo: 'E-mail', valor: 'emaildefulano@gmail.com' },
-  { titulo: 'Telefone', valor: '(00) 00000-0000' },
+  ['Nome', 'Cecílio Alencar'],
+  ['CPF', '*********00-05'],
+  ['Estado civil', 'Casado'],
+  ['E-mail', 'emaildefulano@gmail.com'],
+  ['Telefone', '(00) 00000-0000'],
 ];
 
 export default function TelaMeusDados({ onVoltar }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={CORES.branco} />
-
-      <ScrollView
-        contentContainerStyle={styles.conteudo}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.conteudo}>
         <View style={styles.cabecalho}>
           <BotaoVoltar onPress={onVoltar} />
-          <Text style={styles.tituloCabecalho}>Meus dados</Text>
+          <Text style={styles.titulo}>Meus dados</Text>
         </View>
-
-        <View style={styles.secao}>
-          <View style={styles.tituloSecao}>
-            <IconePerfil nome="usuario" cor={CORES.texto} tamanho={20} />
-            <Text style={styles.textoTituloSecao}>Dados pessoais</Text>
-          </View>
-
-          <View style={styles.listaDados}>
-            {DADOS_PESSOAIS.map((dado) => (
-              <InformacaoPessoal
-                key={dado.titulo}
-                titulo={dado.titulo}
-                valor={dado.valor}
-              />
-            ))}
-          </View>
+        <Text style={styles.tituloSecao}>Dados pessoais</Text>
+        <View style={styles.lista}>
+          {DADOS_PESSOAIS.map(([rotulo, valor]) => (
+            <View key={rotulo} style={styles.item}>
+              <Text style={styles.rotulo}>{rotulo}</Text>
+              <Text style={styles.valor}>{valor}</Text>
+            </View>
+          ))}
         </View>
-
-        <Image
-          source={require('../../assets/logo-iptu-verde.png')}
-          style={styles.logo}
-          resizeMode="contain"
-          accessibilityLabel="IPTU Verde Quixadá"
-        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -69,43 +47,45 @@ const styles = StyleSheet.create({
   },
   conteudo: {
     flexGrow: 1,
-    paddingHorizontal: 18,
-    paddingTop: 28,
-    paddingBottom: 24,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 28,
   },
   cabecalho: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
   },
-  tituloCabecalho: {
+  titulo: {
     color: CORES.texto,
     fontSize: 18,
     fontFamily: 'Alexandria_700Bold',
   },
-  secao: {
-    marginTop: 38,
-    marginLeft: 10,
-  },
   tituloSecao: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  textoTituloSecao: {
+    marginTop: 38,
+    marginBottom: 16,
     color: CORES.texto,
     fontSize: 17,
     fontFamily: 'Alexandria_700Bold',
   },
-  listaDados: {
-    marginTop: 8,
-    marginLeft: 24,
-    gap: 8,
+  lista: {
+    gap: 12,
   },
-  logo: {
-    width: 92,
-    height: 50,
-    alignSelf: 'center',
-    marginTop: 'auto',
+  item: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: 12,
+    backgroundColor: CORES.cinza,
+  },
+  rotulo: {
+    color: CORES.textoSecundario,
+    fontSize: 11,
+    fontFamily: 'Inter_400Regular',
+  },
+  valor: {
+    marginTop: 4,
+    color: CORES.texto,
+    fontSize: 14,
+    fontFamily: 'Inter_700Bold',
   },
 });
