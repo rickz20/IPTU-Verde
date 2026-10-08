@@ -18,6 +18,7 @@ import ItemColeta from '../components/telaInicial/ItemColeta';
 import MenuInferior from '../components/telaInicial/MenuInferior';
 import MeusAgendamentos from './MeusAgendamentos';
 import TelaPerfil from './TelaPerfil';
+import TodasColetas from './TodasColetas';
 import { coletas } from '../components/telaInicial/dados';
 import { CORES } from '../components/telaInicial/tema';
 
@@ -48,6 +49,10 @@ export default function TelaInicial() {
     return <MeusAgendamentos onSelecionarAba={selecionarAba} />;
   }
 
+  if (telaAtual === 'todas-coletas') {
+    return <TodasColetas onVoltar={() => setTelaAtual('inicio')} />;
+  }
+
   if (telaAtual === 'tela-agendamento') {
     return <PontosDeColeta onVoltar={() => setTelaAtual('inicio')} />;
   }
@@ -76,7 +81,10 @@ export default function TelaInicial() {
           <View style={styles.cabecalhoSecao}>
             <Text style={styles.tituloSecao}>Últimas coletas</Text>
 
-            <Pressable onPress={() => {}} accessibilityRole="button">
+            <Pressable
+              onPress={() => setTelaAtual('todas-coletas')}
+              accessibilityRole="button"
+            >
               <Text style={styles.linkVerMais}>Ver mais →</Text>
             </Pressable>
           </View>
