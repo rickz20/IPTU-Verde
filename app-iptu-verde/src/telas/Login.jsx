@@ -4,12 +4,12 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import InputCadastro from '../components/InputCadastro';
 import AlertIcon from '../../assets/alert-circle.svg';
 import TelaInicial from './TelaInicial';
 
@@ -364,22 +364,17 @@ export default function Login() {
             </>
           ) : (
             registrationFields.map((field) => (
-              <TextInput
+              <InputCadastro
                 key={field.key}
-                style={[
-                  styles.registrationInput,
-                  fieldErrors[field.key] && styles.registrationInputError,
-                ]}
                 placeholder={field.placeholder}
-                placeholderTextColor="#777777"
                 value={field.value}
                 onChangeText={(value) =>
                   handleRegistrationFieldChange(field, value)
                 }
-                keyboardType={field.keyboardType || 'default'}
-                autoCapitalize={field.autoCapitalize || 'sentences'}
-                secureTextEntry={Boolean(field.secureTextEntry)}
-                autoCorrect={false}
+                keyboardType={field.keyboardType}
+                autoCapitalize={field.autoCapitalize}
+                secureTextEntry={field.secureTextEntry}
+                hasError={fieldErrors[field.key]}
               />
             ))
           )}
@@ -473,22 +468,6 @@ const styles = StyleSheet.create({
   },
   registrationForm: {
     marginBottom: 35,
-  },
-  registrationInput: {
-    width: '100%',
-    height: 42,
-    marginBottom: 8,
-    paddingHorizontal: 12,
-    borderRadius: 7,
-    backgroundColor: '#F0F0F0',
-    color: '#333333',
-    fontSize: 12,
-    fontFamily: 'Inter_400Regular',
-    outlineStyle: 'none',
-  },
-  registrationInputError: {
-    borderWidth: 1,
-    borderColor: '#D32F2F',
   },
   errorMessage: {
     minHeight: 40,
