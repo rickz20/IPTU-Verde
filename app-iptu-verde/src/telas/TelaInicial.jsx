@@ -20,6 +20,9 @@ import MeusAgendamentos from './MeusAgendamentos';
 import TelaNotificacoes from './TelaNotificacoes';
 import TelaPerfil from './TelaPerfil';
 import TodasColetas from './TodasColetas';
+import TelaMeusDados from './TelaMeusDados';
+import TelaMeusImoveis from './TelaMeusImoveis';
+import TelaAlterarSenha from './TelaAlterarSenha';
 import { coletas } from '../components/telaInicial/dados';
 import { CORES } from '../components/telaInicial/tema';
 
@@ -45,8 +48,24 @@ export default function TelaInicial() {
     return (
       <TelaPerfil
         onSelecionarAba={selecionarAba}
+        onMeusDados={() => setTelaAtual('meus-dados')}
+        onMeusImoveis={() => setTelaAtual('meus-imoveis')}
+        onAlterarSenha={() => setTelaAtual('alterar-senha')}
+        onSair={onSair}
       />
     );
+  }
+
+  if (telaAtual === 'meus-dados') {
+    return <TelaMeusDados onVoltar={() => setTelaAtual('perfil')} />;
+  }
+
+  if (telaAtual === 'meus-imoveis') {
+    return <TelaMeusImoveis onVoltar={() => setTelaAtual('perfil')} />;
+  }
+
+  if (telaAtual === 'alterar-senha') {
+    return <TelaAlterarSenha onVoltar={() => setTelaAtual('perfil')} />;
   }
 
   if (telaAtual === 'meus-agendamentos') {

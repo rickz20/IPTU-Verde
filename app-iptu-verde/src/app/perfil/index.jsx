@@ -36,10 +36,6 @@ export default function RotaPerfil() {
   const abrirSenha = () =>
     router.push('/perfil/alterar-senha');
 
-  // Definindo a navegação provisória para Sair
-  const abrirSair = () =>
-    router.push('/perfil/sair');
-
   // Renderizando o Perfil com as ações conectadas
   return (
     <TelaPerfil
@@ -49,7 +45,7 @@ export default function RotaPerfil() {
       onSeguranca={abrirSeguranca}
       onAjuda={abrirAjuda}
       onAlterarSenha={abrirSenha}
-      onSair={abrirSair}
+      onSair={() => router.replace('/')}
     />
   );
 }

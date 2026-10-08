@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import {
+  Modal,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -7,6 +9,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 import AvatarPerfil from '../components/AvatarPerfil';
 import OpcaoPerfil from '../components/OpcaoPerfil';
 import MenuInferior from '../components/telaInicial/MenuInferior';
@@ -25,12 +28,39 @@ const OPCOES_PERFIL = [
   { id: 'sair', titulo: 'Sair', icone: 'sair', destaque: true },
 ];
 
-export default function TelaPerfil({ onSelecionarAba }) {
+export default function TelaPerfil({
+  onSelecionarAba,
+  onMeusDados,
+  onMeusImoveis,
+  onAlterarSenha,
+  onSair,
+}) {
   const [abaSelecionada, setAbaSelecionada] = useState('perfil');
+  const [mostrarConfirmacaoSaida, setMostrarConfirmacaoSaida] = useState(false);
 
   function selecionarAba(aba) {
     setAbaSelecionada(aba);
     onSelecionarAba?.(aba);
+  }
+
+  function selecionarOpcao(id) {
+    const acoes = {
+      'meus-dados': onMeusDados,
+      'meus-imoveis': onMeusImoveis,
+      'alterar-senha': onAlterarSenha,
+    };
+
+    if (id === 'sair') {
+      setMostrarConfirmacaoSaida(true);
+      return;
+    }
+
+    acoes[id]?.();
+  }
+
+  function confirmarSaida() {
+    setMostrarConfirmacaoSaida(false);
+    onSair?.();
   }
 
   return (
@@ -54,6 +84,7 @@ export default function TelaPerfil({ onSelecionarAba }) {
               titulo={opcao.titulo}
               icone={opcao.icone}
               destaque={opcao.destaque}
+              onPress={() => selecionarOpcao(opcao.id)}
             />
           ))}
         </View>
@@ -63,6 +94,56 @@ export default function TelaPerfil({ onSelecionarAba }) {
         selecionado={abaSelecionada}
         onSelecionar={selecionarAba}
       />
+
+      <Modal
+        transparent
+        visible={mostrarConfirmacaoSaida}
+        animationType="fade"
+        onRequestClose={() => setMostrarConfirmacaoSaida(false)}
+      >
+        <Pressable
+          style={styles.modalFundo}
+          onPress={() => setMostrarConfirmacaoSaida(false)}
+        >
+          <Pressable style={styles.modalCartao} onPress={() => {}}>
+            <Svg
+              width={36}
+              height={36}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke={CORES.verdeEscuro}
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={styles.modalIcone}
+              accessibilityLabel="Sair da conta"
+            >
+              <Path d="M10 5H5v14h5" />
+              <Path d="m13 8 4 4-4 4M17 12H9" />
+            </Svg>
+            <Text style={styles.modalTitulo}>Sair da conta?</Text>
+            <Text style={styles.modalDescricao}>
+              Tem certeza de que deseja sair da sua conta?
+            </Text>
+            <View style={styles.modalAcoes}>
+              <Pressable
+                style={styles.modalBotao}
+                onPress={() => setMostrarConfirmacaoSaida(false)}
+                accessibilityRole="button"
+              >
+                <Text style={styles.modalTextoBotao}>Cancelar</Text>
+              </Pressable>
+              <Pressable
+                style={styles.modalBotao}
+                onPress={confirmarSaida}
+                accessibilityRole="button"
+              >
+                <Text style={styles.modalTextoBotao}>Sair</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -93,5 +174,58 @@ const styles = StyleSheet.create({
   },
   opcoes: {
     gap: 8,
+  },
+  modalFundo: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    backgroundColor: 'rgba(13, 13, 13, 0.36)',
+  },
+  modalCartao: {
+    width: '100%',
+    maxWidth: 380,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 22,
+    paddingBottom: 18,
+    borderRadius: 18,
+    backgroundColor: CORES.branco,
+  },
+  modalIcone: {
+    width: 36,
+    height: 36,
+    marginBottom: 14,
+  },
+  modalTitulo: {
+    color: CORES.texto,
+    fontSize: 18,
+    fontFamily: 'Alexandria_700Bold',
+    marginBottom: 5,
+  },
+  modalDescricao: {
+    color: CORES.textoSecundario,
+    fontSize: 12,
+    fontFamily: 'Inter_400Regular',
+    textAlign: 'center',
+    marginBottom: 18,
+  },
+  modalAcoes: {
+    width: '100%',
+    flexDirection: 'row',
+    gap: 12,
+  },
+  modalBotao: {
+    flex: 1,
+    height: 42,
+    borderRadius: 12,
+    backgroundColor: CORES.verde,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalTextoBotao: {
+    color: CORES.branco,
+    fontSize: 13,
+    fontFamily: 'Inter_700Bold',
   },
 });
