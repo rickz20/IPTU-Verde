@@ -17,13 +17,17 @@ import CartaoProgresso from '../components/telaInicial/CartaoProgresso';
 import ItemColeta from '../components/telaInicial/ItemColeta';
 import MenuInferior from '../components/telaInicial/MenuInferior';
 import MeusAgendamentos from './MeusAgendamentos';
+import TelaNotificacoes from './TelaNotificacoes';
 import TelaPerfil from './TelaPerfil';
 import TodasColetas from './TodasColetas';
 import { coletas } from '../components/telaInicial/dados';
 import { CORES } from '../components/telaInicial/tema';
 
 export default function TelaInicial() {
+  // Controlando a aba selecionada no menu inferior
   const [abaSelecionada, setAbaSelecionada] = useState('inicio');
+
+  // Controlando a tela exibida atualmente
   const [telaAtual, setTelaAtual] = useState('inicio');
 
   function selecionarAba(aba) {
@@ -57,6 +61,12 @@ export default function TelaInicial() {
     return <PontosDeColeta onVoltar={() => setTelaAtual('inicio')} />;
   }
 
+  if (telaAtual === 'notificacoes') {
+    return (
+      <TelaNotificacoes onVoltar={() => setTelaAtual('inicio')} />
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={CORES.branco} />
@@ -66,7 +76,7 @@ export default function TelaInicial() {
         contentContainerStyle={styles.conteudo}
         showsVerticalScrollIndicator={false}
       >
-        <Cabecalho onNotificacoes={() => {}} />
+        <Cabecalho onNotificacoes={() => setTelaAtual('notificacoes')} />
 
         <View style={styles.secaoProgresso}>
           <Text style={styles.tituloSecao}>Meu Progresso</Text>

@@ -59,6 +59,13 @@ const ICONES = {
     android: 'edit',
     web: 'edit',
   },
+
+mensagem: {
+  ios: 'bubble.left',
+  android: 'chat_bubble',
+  web: 'chat_bubble',
+},
+
 };
 
 // Criando o componente reutilizável de ícones

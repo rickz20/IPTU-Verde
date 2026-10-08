@@ -16,13 +16,19 @@ export default function Cabecalho({ onNotificacoes = () => {} }) {
       </View>
 
       <Pressable
-        style={styles.botaoNotificacao}
+        style={({ pressed }) => [
+          styles.botaoNotificacao,
+          pressed && styles.botaoNotificacaoPressionado,
+        ]}
         onPress={onNotificacoes}
         accessibilityRole="button"
         accessibilityLabel="Notificações"
+        hitSlop={10}
       >
-        <Text style={styles.iconeNotificacao}>♧</Text>
-        <Text style={styles.sino}>♟</Text>
+        <Text style={styles.sino}>🔔</Text>
+        <View style={styles.badgeNotificacao}>
+          <Text style={styles.badgeTexto}>3</Text>
+        </View>
       </Pressable>
     </View>
   );
@@ -52,12 +58,40 @@ const styles = StyleSheet.create({
     backgroundColor: CORES.amarelo,
     alignItems: 'center',
     justifyContent: 'center',
+    elevation: 3,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+    position: 'relative',
   },
-  iconeNotificacao: {
-    display: 'none',
+  botaoNotificacaoPressionado: {
+    backgroundColor: '#E5B832',
+    transform: [{ scale: 0.97 }],
   },
   sino: {
     color: CORES.branco,
-    fontSize: 24,
+    fontSize: 20,
+    lineHeight: 20,
+  },
+  badgeNotificacao: {
+    position: 'absolute',
+    top: -4,
+    right: -2,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#D63B3B',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+    borderWidth: 2,
+    borderColor: CORES.branco,
+  },
+  badgeTexto: {
+    color: CORES.branco,
+    fontSize: 10,
+    fontFamily: 'Inter_700Bold',
+    lineHeight: 10,
   },
 });
