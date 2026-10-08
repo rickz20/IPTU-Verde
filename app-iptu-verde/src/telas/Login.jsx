@@ -217,6 +217,11 @@ export default function Login() {
     setShowHome(true);
   }
 
+  function handleLogout() {
+    setShowHome(false);
+    setPassword('');
+  }
+
   function handleRegistration() {
     const errors = {
       name: !name.trim(),
@@ -278,7 +283,7 @@ export default function Login() {
   }
 
   if (showHome) {
-    return <TelaInicial />;
+    return <TelaInicial onSair={handleLogout} />;
   }
 
   return (
