@@ -1,7 +1,7 @@
 {
   "name": "app-iptu-verde",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "expo-router/entry",
   "dependencies": {
     "@expo-google-fonts/alexandria": "^0.4.2",
     "@expo-google-fonts/inter": "^0.4.2",
