@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CORES } from './tema';
 
 export const itensMenuPadrao = [
@@ -12,8 +13,15 @@ export default function MenuInferior({
   onSelecionar = () => {},
   itens = itensMenuPadrao,
 }) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={styles.menuInferior}>
+    <View
+      style={[
+        styles.menuInferior,
+        { paddingBottom: Math.max(8, insets.bottom) },
+      ]}
+    >
       {itens.map((item) => (
         <Pressable
           key={item.id}
@@ -48,7 +56,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 8,
     paddingTop: 5,
-    paddingBottom: 4,
   },
   itemMenu: {
     flex: 1,

@@ -2,13 +2,13 @@ import { useState } from 'react';
 import {
   Modal,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import AvatarPerfil from '../components/AvatarPerfil';
 import OpcaoPerfil from '../components/OpcaoPerfil';
@@ -32,6 +32,8 @@ export default function TelaPerfil({
   onSelecionarAba,
   onMeusDados,
   onMeusImoveis,
+  onSeguranca,
+  onAjuda,
   onAlterarSenha,
   onSair,
 }) {
@@ -47,6 +49,8 @@ export default function TelaPerfil({
     const acoes = {
       'meus-dados': onMeusDados,
       'meus-imoveis': onMeusImoveis,
+      'seguranca-privacidade': onSeguranca,
+      'ajuda-suporte': onAjuda,
       'alterar-senha': onAlterarSenha,
     };
 

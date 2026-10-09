@@ -3,6 +3,7 @@ import React from 'react';
 
 // Importando o sistema de navegação
 import { Stack } from 'expo-router';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 // Importando a barra de status do Expo
 import { StatusBar } from 'expo-status-bar';
@@ -40,7 +41,7 @@ export default function RootLayout() {
 
   // Renderizando o sistema de navegação
   return (
-    <>
+    <SafeAreaProvider>
       {/* Configurando as telas em pilha */}
       <Stack
         screenOptions={{
@@ -50,6 +51,6 @@ export default function RootLayout() {
 
       {/* Configurando a barra de status */}
       <StatusBar style="auto" />
-    </>
+    </SafeAreaProvider>
   );
 }

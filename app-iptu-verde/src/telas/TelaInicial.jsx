@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import {
-  SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -9,6 +8,7 @@ import {
   View,
   Pressable,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Cabecalho from '../components/telaInicial/Cabecalho';
 import PontosDeColeta from './PontosDeColeta';
@@ -19,6 +19,7 @@ import MenuInferior from '../components/telaInicial/MenuInferior';
 import MeusAgendamentos from './MeusAgendamentos';
 import TelaNotificacoes from './TelaNotificacoes';
 import TelaPerfil from './TelaPerfil';
+import TelaEmBranco from './TelaEmBranco';
 import TodasColetas from './TodasColetas';
 import TelaMeusDados from './TelaMeusDados';
 import TelaMeusImoveis from './TelaMeusImoveis';
@@ -26,7 +27,7 @@ import TelaAlterarSenha from './TelaAlterarSenha';
 import { coletas } from '../components/telaInicial/dados';
 import { CORES } from '../components/telaInicial/tema';
 
-export default function TelaInicial() {
+export default function TelaInicial({ onSair }) {
   // Controlando a aba selecionada no menu inferior
   const [abaSelecionada, setAbaSelecionada] = useState('inicio');
 
@@ -50,6 +51,8 @@ export default function TelaInicial() {
         onSelecionarAba={selecionarAba}
         onMeusDados={() => setTelaAtual('meus-dados')}
         onMeusImoveis={() => setTelaAtual('meus-imoveis')}
+        onSeguranca={() => setTelaAtual('seguranca-privacidade')}
+        onAjuda={() => setTelaAtual('ajuda-suporte')}
         onAlterarSenha={() => setTelaAtual('alterar-senha')}
         onSair={onSair}
       />
@@ -66,6 +69,24 @@ export default function TelaInicial() {
 
   if (telaAtual === 'alterar-senha') {
     return <TelaAlterarSenha onVoltar={() => setTelaAtual('perfil')} />;
+  }
+
+  if (telaAtual === 'seguranca-privacidade') {
+    return (
+      <TelaEmBranco
+        titulo="Segurança e privacidade"
+        onVoltar={() => setTelaAtual('perfil')}
+      />
+    );
+  }
+
+  if (telaAtual === 'ajuda-suporte') {
+    return (
+      <TelaEmBranco
+        titulo="Ajuda e suporte"
+        onVoltar={() => setTelaAtual('perfil')}
+      />
+    );
   }
 
   if (telaAtual === 'meus-agendamentos') {

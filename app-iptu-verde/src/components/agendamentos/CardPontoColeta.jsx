@@ -37,24 +37,25 @@ export default function CardPontoColeta({ ponto, onAgendar = () => {} }) {
 
 const styles = StyleSheet.create({
   cartao: {
-    minHeight: 200,
+    minHeight: 220,
     padding: 12,
     borderRadius: 18,
     backgroundColor: CORES.cinza,
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'stretch',
     gap: 12,
   },
   mapa: {
-    flex: 1,
-    minHeight: 164,
+    width: '100%',
+    height: 170,
     borderWidth: 2,
     borderColor: '#969188',
     borderRadius: 8,
     overflow: 'hidden',
+    backgroundColor: '#F5F5F5',
   },
   informacoes: {
-    flex: 1.05,
+    flex: 1,
     justifyContent: 'center',
   },
   tituloLinha: {

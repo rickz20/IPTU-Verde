@@ -1,11 +1,11 @@
 import {
-  SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import CardPontoColeta from '../components/agendamentos/CardPontoColeta';
 import { pontosColeta } from '../components/agendamentos/dadosPontosColeta';

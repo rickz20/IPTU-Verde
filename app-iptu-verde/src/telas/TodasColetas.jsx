@@ -1,11 +1,11 @@
 import {
-  SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import BotaoVoltar from '../components/BotaoVoltar';
 import CardTodasColetas from '../components/telaInicial/CardTodasColetas';
 import { todasColetas } from '../components/telaInicial/dados';

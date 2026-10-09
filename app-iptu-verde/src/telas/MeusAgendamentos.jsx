@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import {
-  SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CardMeuAgendamento from '../components/agendamentos/CardMeuAgendamento';
 import { meusAgendamentos } from '../components/agendamentos/dadosMeusAgendamentos';
 import MenuInferior from '../components/telaInicial/MenuInferior';

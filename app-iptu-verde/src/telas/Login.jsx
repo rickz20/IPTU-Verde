@@ -128,22 +128,29 @@ export default function Login() {
 
   function handleEmailChange(value) {
     setEmail(value);
-    if (isValidEmail(value)) {
-      setFieldErrors((current) => ({ ...current, loginEmail: false }));
-    }
-    if (errorMessage !== REQUIRED_FIELDS_ERROR && isValidEmail(value)) {
+
+    const nextErrors = {
+      ...fieldErrors,
+      loginEmail: value.trim().length > 0 && !isValidEmail(value),
+    };
+    setFieldErrors(nextErrors);
+
+    if (isValidEmail(value) && !Object.values(nextErrors).some(Boolean)) {
       setErrorMessage('');
     }
   }
 
   function handleLoginPasswordChange(value) {
     setPassword(value);
-    if (value.trim()) {
-      const nextErrors = { ...fieldErrors, loginPassword: false };
-      setFieldErrors(nextErrors);
-      if (!Object.values(nextErrors).some(Boolean)) {
-        setErrorMessage('');
-      }
+
+    const nextErrors = {
+      ...fieldErrors,
+      loginPassword: value.trim().length === 0,
+    };
+    setFieldErrors(nextErrors);
+
+    if (value.trim() && !Object.values(nextErrors).some(Boolean)) {
+      setErrorMessage('');
     }
   }
 
@@ -163,6 +170,8 @@ export default function Login() {
     const nextErrors = { ...fieldErrors };
     if (fieldIsValid) {
       nextErrors[field.key] = false;
+    } else if (fieldErrors[field.key] || Object.values(fieldErrors).some(Boolean)) {
+      nextErrors[field.key] = true;
     }
 
     const nextPassword = field.key === 'password' ? value : password;
@@ -219,7 +228,16 @@ export default function Login() {
 
   function handleLogout() {
     setShowHome(false);
+    setActiveTab('Login');
+    setErrorMessage('');
+    setSuccessMessage('');
+    setFieldErrors({});
+    setName('');
+    setCpf('');
+    setPhone('');
+    setEmail('');
     setPassword('');
+    setConfirmPassword('');
   }
 
   function handleRegistration() {
