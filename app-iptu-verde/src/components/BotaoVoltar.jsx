@@ -1,3 +1,4 @@
+import { rem } from '../utils/typography';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { CORES } from './telaInicial/tema';
 
@@ -25,8 +26,8 @@ const styles = StyleSheet.create({
   },
   seta: {
     color: CORES.branco,
-    fontSize: 24,
-    lineHeight: 28,
+    fontSize: rem(1.5),
+    lineHeight: rem(1.75),
     fontFamily: 'Inter_400Regular',
   },
 });

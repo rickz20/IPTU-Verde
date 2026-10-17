@@ -1,3 +1,4 @@
+import { rem } from '../utils/typography';
 import { useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -185,20 +186,20 @@ const styles = StyleSheet.create({
     borderRadius: 56, overflow: 'hidden',
   },
   form: { paddingHorizontal: 4 },
-  titulo: { color: CORES.texto, fontSize: 16, fontFamily: 'Alexandria_700Bold' },
+  titulo: { color: CORES.texto, fontSize: rem(1.125), fontFamily: 'Alexandria_700Bold' },
   descricao: {
     marginTop: 4, marginBottom: 12, color: CORES.textoSecundario,
-    fontSize: 12, lineHeight: 17, fontFamily: 'Inter_400Regular',
+    fontSize: rem(1), lineHeight: rem(1.25), fontFamily: 'Inter_400Regular',
   },
   campo: { marginBottom: 2 },
   campoConfirmacao: { marginTop: 8, marginBottom: 0 },
   requisito: {
-    marginLeft: 10, color: CORES.textoSecundario, fontSize: 10,
-    lineHeight: 15, fontFamily: 'Inter_400Regular',
+    marginLeft: 10, color: CORES.textoSecundario, fontSize: rem(1),
+    lineHeight: rem(1.25), fontFamily: 'Inter_400Regular',
   },
   requisitoAtendido: { color: CORES.verdeEscuro },
   erro: {
-    marginTop: 4, color: '#C93640', fontSize: 10,
+    marginTop: 4, color: '#C93640', fontSize: rem(1),
     fontFamily: 'Inter_400Regular',
   },
   botao: {
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
     borderRadius: 12, backgroundColor: CORES.verde,
     alignItems: 'center', justifyContent: 'center',
   },
-  textoBotao: { color: CORES.branco, fontSize: 14, fontFamily: 'Alexandria_700Bold' },
+  textoBotao: { color: CORES.branco, fontSize: rem(1), fontFamily: 'Alexandria_700Bold' },
   modalFundo: {
     flex: 1, justifyContent: 'center', alignItems: 'center',
     paddingHorizontal: 24, backgroundColor: 'rgba(13, 13, 13, 0.36)',
@@ -218,14 +219,14 @@ const styles = StyleSheet.create({
   },
   iconeSucesso: {
     height: 34, marginBottom: 14, color: CORES.verde,
-    fontSize: 30, lineHeight: 34, fontFamily: 'Inter_700Bold',
+    fontSize: rem(1.875), lineHeight: rem(2.125), fontFamily: 'Inter_700Bold',
   },
   tituloModal: {
-    marginBottom: 3, color: CORES.texto, fontSize: 16,
+    marginBottom: 3, color: CORES.texto, fontSize: rem(1.125),
     fontFamily: 'Alexandria_700Bold', textAlign: 'center',
   },
   textoModal: {
-    marginBottom: 20, color: CORES.textoSecundario, fontSize: 10,
+    marginBottom: 20, color: CORES.textoSecundario, fontSize: rem(1),
     fontFamily: 'Inter_400Regular', textAlign: 'center',
   },
   acoesModal: { width: '100%', flexDirection: 'row', gap: 10 },
@@ -233,5 +234,5 @@ const styles = StyleSheet.create({
     flex: 1, height: 42, borderRadius: 12, backgroundColor: CORES.verde,
     alignItems: 'center', justifyContent: 'center',
   },
-  textoBotaoModal: { color: CORES.branco, fontSize: 12, fontFamily: 'Inter_700Bold' },
+  textoBotaoModal: { color: CORES.branco, fontSize: rem(1), fontFamily: 'Inter_700Bold' },
 });

@@ -1,3 +1,4 @@
+import { rem } from '../../utils/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import ProgressoCircular from './ProgressoCircular';
 import { CORES } from './tema';
@@ -45,13 +46,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   textoPequeno: {
-    fontSize: 9,
+    fontSize: rem(1),
     color: CORES.texto,
     fontFamily: 'Inter_400Regular',
   },
   numeroColetas: {
-    fontSize: 19,
-    lineHeight: 24,
+    fontSize: rem(1.25),
+    lineHeight: rem(1.5),
     color: CORES.texto,
     fontFamily: 'Alexandria_700Bold',
   },
@@ -70,8 +71,8 @@ const styles = StyleSheet.create({
     backgroundColor: CORES.verde,
   },
   dicaProgresso: {
-    fontSize: 9,
-    lineHeight: 13,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     color: CORES.textoSecundario,
     fontFamily: 'Inter_400Regular',
   },

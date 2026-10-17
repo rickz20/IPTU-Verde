@@ -1,3 +1,4 @@
+import { rem } from '../../utils/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Path, Rect } from 'react-native-svg';
 import { CORES } from '../telaInicial/tema';
@@ -85,20 +86,20 @@ const styles = StyleSheet.create({
   },
   rotulo: {
     color: '#5E5B56',
-    fontSize: 9,
-    lineHeight: 12,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_400Regular',
   },
   titulo: {
     color: CORES.texto,
-    fontSize: 13,
-    lineHeight: 17,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Alexandria_700Bold',
   },
   valorEmNegrito: {
     color: '#111111',
-    fontSize: 9,
-    lineHeight: 11,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_700Bold',
   },
 });

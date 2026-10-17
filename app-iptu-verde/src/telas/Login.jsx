@@ -1,6 +1,10 @@
-import { useState } from 'react';
+import { rem } from '../utils/typography';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -57,6 +61,61 @@ export default function Login() {
   const [fieldErrors, setFieldErrors] = useState({});
   const [showHome, setShowHome] = useState(false);
   const isLogin = activeTab === 'Login';
+  const scrollViewRef = useRef(null);
+  const focusedInputRef = useRef(null);
+  const scrollViewportHeight = useRef(0);
+  const emailInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const registrationInputRefs = {
+    name: useRef(null),
+    cpf: useRef(null),
+    phone: useRef(null),
+    email: useRef(null),
+    password: useRef(null),
+    confirmPassword: useRef(null),
+  };
+
+  const centerFocusedInput = useCallback(() => {
+    if (Platform.OS === 'web') {
+      return;
+    }
+
+    const input = focusedInputRef.current;
+    const scrollView = scrollViewRef.current;
+    if (!input || !scrollView || !scrollViewportHeight.current) {
+      return;
+    }
+
+    input.measureLayout(
+      scrollView,
+      (x, y, width, height) => {
+        const targetY = Math.max(
+          0,
+          y + height / 2 - scrollViewportHeight.current / 2,
+        );
+        scrollView.scrollTo({ y: targetY, animated: true });
+      },
+      () => console.warn('Não foi possível reposicionar o campo focado.'),
+    );
+  }, []);
+
+  const handleInputFocus = useCallback((input) => {
+    if (Platform.OS === 'web') {
+      return;
+    }
+
+    focusedInputRef.current = input;
+    requestAnimationFrame(centerFocusedInput);
+  }, [centerFocusedInput]);
+
+  useEffect(() => {
+    const keyboardSubscription = Keyboard.addListener(
+      'keyboardDidShow',
+      centerFocusedInput,
+    );
+
+    return () => keyboardSubscription.remove();
+  }, [centerFocusedInput]);
 
   const registrationFields = [
     {
@@ -305,116 +364,133 @@ export default function Login() {
   }
 
   return (
-    <ScrollView
+    <KeyboardAvoidingView
       style={styles.container}
-      contentContainerStyle={styles.scrollContent}
-      keyboardShouldPersistTaps="handled"
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={styles.content}>
-        <Image
-          source={require('../../assets/image 4.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        onLayout={(event) => {
+          scrollViewportHeight.current = event.nativeEvent.layout.height;
+          requestAnimationFrame(centerFocusedInput);
+        }}
+      >
+        <View style={styles.content}>
+          <Image
+            source={require('../../assets/image 4.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
 
-        <View style={styles.tabs}>
-          {['Login', 'Cadastro'].map((tab) => {
-            const isActive = activeTab === tab;
+          <View style={styles.tabs}>
+            {['Login', 'Cadastro'].map((tab) => {
+              const isActive = activeTab === tab;
 
-            return (
-              <TouchableOpacity
-                key={tab}
-                style={[styles.tab, isActive && styles.activeTab]}
-                onPress={() => handleTabChange(tab)}
-                activeOpacity={0.8}
-              >
-                <Text style={[styles.tabText, isActive && styles.activeTabText]}>
-                  {tab}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+              return (
+                <TouchableOpacity
+                  key={tab}
+                  style={[styles.tab, isActive && styles.activeTab]}
+                  onPress={() => handleTabChange(tab)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.tabText, isActive && styles.activeTabText]}>
+                    {tab}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
-        <View style={styles.introduction}>
-          <Text style={styles.title}>
-            {isLogin ? 'Faça login para continuar' : 'Preencha os dados a seguir para prosseguir.'}
-          </Text>
-          {isLogin && (
-            <Text style={styles.description}>
-              Acesse sua conta para continuar usando o IPTU Verde.
+          <View style={styles.introduction}>
+            <Text style={styles.title}>
+              {isLogin ? 'Faça login para continuar' : 'Preencha os dados a seguir para prosseguir.'}
             </Text>
+            {isLogin && (
+              <Text style={styles.description}>
+                Acesse sua conta para continuar usando o IPTU Verde.
+              </Text>
+            )}
+          </View>
+
+          {!isLogin && <Text style={styles.sectionTitle}>Dados pessoais</Text>}
+
+          <View style={[styles.form, !isLogin && styles.registrationForm]}>
+            {Boolean(errorMessage) && (
+              <View style={styles.errorMessage} accessibilityRole="alert">
+                <AlertIcon width={20} height={20} />
+                <Text style={styles.errorText}>{errorMessage}</Text>
+              </View>
+            )}
+            {Boolean(successMessage) && (
+              <View style={styles.successMessage} accessibilityRole="alert">
+                <Text style={styles.successText}>{successMessage}</Text>
+              </View>
+            )}
+
+            {isLogin ? (
+              <>
+                <Input
+                  placeholder="E-mail"
+                  inputRef={emailInputRef}
+                  onFocus={handleInputFocus}
+                  keyboardType="email-address"
+                  value={email}
+                  onChangeText={handleEmailChange}
+                  onBlur={validateEmail}
+                  hasError={Boolean(
+                    fieldErrors.loginEmail ||
+                      errorMessage === INVALID_EMAIL_ERROR ||
+                      errorMessage === EMAIL_REQUIRED_ERROR,
+                  )}
+                />
+                <Input
+                  placeholder="Senha"
+                  inputRef={passwordInputRef}
+                  onFocus={handleInputFocus}
+                  secureTextEntry
+                  type="password"
+                  value={password}
+                  onChangeText={handleLoginPasswordChange}
+                  hasError={Boolean(fieldErrors.loginPassword)}
+                />
+              </>
+            ) : (
+              registrationFields.map((field) => (
+                <InputCadastro
+                  key={field.key}
+                  placeholder={field.placeholder}
+                  inputRef={registrationInputRefs[field.key]}
+                  onFocus={handleInputFocus}
+                  value={field.value}
+                  onChangeText={(value) =>
+                    handleRegistrationFieldChange(field, value)
+                  }
+                  keyboardType={field.keyboardType}
+                  autoCapitalize={field.autoCapitalize}
+                  secureTextEntry={field.secureTextEntry}
+                  hasError={fieldErrors[field.key]}
+                />
+              ))
+            )}
+          </View>
+
+          {isLogin && (
+            <TouchableOpacity style={styles.forgotPassword} activeOpacity={0.7}>
+              <Text style={styles.forgotPasswordText}>Esqueceu a senha?</Text>
+            </TouchableOpacity>
           )}
+
+          <Button
+            title={isLogin ? 'Entrar' : 'Continuar'}
+            onPress={isLogin ? handleLogin : handleRegistration}
+          />
         </View>
-
-        {!isLogin && <Text style={styles.sectionTitle}>Dados pessoais</Text>}
-
-        <View style={[styles.form, !isLogin && styles.registrationForm]}>
-          {Boolean(errorMessage) && (
-            <View style={styles.errorMessage} accessibilityRole="alert">
-              <AlertIcon width={20} height={20} />
-              <Text style={styles.errorText}>{errorMessage}</Text>
-            </View>
-          )}
-          {Boolean(successMessage) && (
-            <View style={styles.successMessage} accessibilityRole="alert">
-              <Text style={styles.successText}>{successMessage}</Text>
-            </View>
-          )}
-
-          {isLogin ? (
-            <>
-              <Input
-                placeholder="E-mail"
-                keyboardType="email-address"
-                value={email}
-                onChangeText={handleEmailChange}
-                onBlur={validateEmail}
-                hasError={Boolean(
-                  fieldErrors.loginEmail ||
-                    errorMessage === INVALID_EMAIL_ERROR ||
-                    errorMessage === EMAIL_REQUIRED_ERROR,
-                )}
-              />
-              <Input
-                placeholder="Senha"
-                secureTextEntry
-                type="password"
-                value={password}
-                onChangeText={handleLoginPasswordChange}
-                hasError={Boolean(fieldErrors.loginPassword)}
-              />
-            </>
-          ) : (
-            registrationFields.map((field) => (
-              <InputCadastro
-                key={field.key}
-                placeholder={field.placeholder}
-                value={field.value}
-                onChangeText={(value) =>
-                  handleRegistrationFieldChange(field, value)
-                }
-                keyboardType={field.keyboardType}
-                autoCapitalize={field.autoCapitalize}
-                secureTextEntry={field.secureTextEntry}
-                hasError={fieldErrors[field.key]}
-              />
-            ))
-          )}
-        </View>
-
-        {isLogin && (
-          <TouchableOpacity style={styles.forgotPassword} activeOpacity={0.7}>
-            <Text style={styles.forgotPasswordText}>Esqueceu a senha?</Text>
-          </TouchableOpacity>
-        )}
-
-        <Button
-          title={isLogin ? 'Entrar' : 'Continuar'}
-          onPress={isLogin ? handleLogin : handleRegistration}
-        />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -423,10 +499,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
+  scrollView: {
+    flex: 1,
+  },
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 20,
-    paddingVertical: 36,
+    paddingTop: 56,
+    paddingBottom: 36,
   },
   content: {
     width: '100%',
@@ -434,8 +514,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   logo: {
-    width: 110,
-    height: 47,
+    width: 150,
+    height: 64,
     alignSelf: 'center',
     marginBottom: 22,
   },
@@ -459,7 +539,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     color: '#666666',
-    fontSize: 12,
+    fontSize: rem(1.125),
     fontFamily: 'Alexandria_400Regular',
   },
   activeTabText: {
@@ -472,18 +552,18 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: 3,
     color: '#222222',
-    fontSize: 12,
+    fontSize: rem(1.25),
     fontFamily: 'Inter_700Bold',
   },
   description: {
     color: '#777777',
-    fontSize: 10,
+    fontSize: rem(1),
     fontFamily: 'Inter_400Regular',
   },
   sectionTitle: {
     marginBottom: 8,
     color: '#222222',
-    fontSize: 14,
+    fontSize: rem(1.125),
     fontFamily: 'Inter_700Bold',
   },
   form: {
@@ -505,7 +585,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 8,
     color: '#D32F2F',
-    fontSize: 12,
+    fontSize: rem(1),
     fontFamily: 'Inter_700Bold',
   },
   successMessage: {
@@ -518,7 +598,7 @@ const styles = StyleSheet.create({
   },
   successText: {
     color: '#526600',
-    fontSize: 12,
+    fontSize: rem(1),
     fontFamily: 'Inter_700Bold',
   },
   forgotPassword: {
@@ -527,7 +607,7 @@ const styles = StyleSheet.create({
   },
   forgotPasswordText: {
     color: '#333333',
-    fontSize: 10,
+    fontSize: rem(1),
     textDecorationLine: 'underline',
     fontFamily: 'Inter_400Regular',
   },

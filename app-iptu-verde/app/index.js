@@ -1,3 +1,4 @@
+import { rem } from '../src/utils/typography';
 import { StyleSheet, Text, View } from "react-native";
 
 export default function Page() {
@@ -24,11 +25,11 @@ const styles = StyleSheet.create({
     marginHorizontal: "auto",
   },
   title: {
-    fontSize: 64,
+    fontSize: rem(4),
     fontWeight: "bold",
   },
   subtitle: {
-    fontSize: 36,
+    fontSize: rem(2.25),
     color: "#38434D",
   },
 });

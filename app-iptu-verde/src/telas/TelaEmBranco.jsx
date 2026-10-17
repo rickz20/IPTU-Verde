@@ -1,3 +1,4 @@
+import { rem } from '../utils/typography';
 
 import React from 'react';
 
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
   // Formatando o título
   titulo: {
     fontFamily: 'Alexandria_700Bold',
-    fontSize: 22,
+    fontSize: rem(1.375),
     color: '#292929',
     textAlign: 'center',
   },
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
   descricao: {
     marginTop: 12,
     fontFamily: 'Inter_400Regular',
-    fontSize: 14,
+    fontSize: rem(1),
     color: '#96938D',
     textAlign: 'center',
   },

@@ -1,3 +1,4 @@
+import { rem } from '../../utils/typography';
 
 import React from 'react';
 
@@ -129,8 +130,8 @@ const styles = StyleSheet.create({
   titulo: {
     flex: 1,
     fontFamily: 'Inter_700Bold',
-    fontSize: 14,
-    lineHeight: 19,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     color: CORES.texto,
   },
 
@@ -143,8 +144,8 @@ const styles = StyleSheet.create({
   // Formatando a data e o horário
   textoData: {
     fontFamily: 'Inter_400Regular',
-    fontSize: 9,
-    lineHeight: 14,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     color: CORES.textoSecundario,
     textAlign: 'right',
   },
@@ -153,8 +154,8 @@ const styles = StyleSheet.create({
   descricao: {
     marginTop: 12,
     fontFamily: 'Inter_400Regular',
-    fontSize: 11,
-    lineHeight: 16,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     color: CORES.texto,
   },
 

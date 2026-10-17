@@ -1,3 +1,4 @@
+import { rem } from '../utils/typography';
 import { useState } from 'react';
 import {
   StyleSheet,
@@ -18,6 +19,8 @@ export default function InputCadastro({
   hasError = false,
   textContentType,
   containerStyle,
+  inputRef,
+  onFocus,
 }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -31,6 +34,7 @@ export default function InputCadastro({
       ]}
     >
       <TextInput
+        ref={inputRef}
         style={styles.input}
         placeholder={placeholder}
         placeholderTextColor="#777777"
@@ -41,6 +45,7 @@ export default function InputCadastro({
         secureTextEntry={secureTextEntry && !isPasswordVisible}
         textContentType={textContentType}
         autoCorrect={false}
+        onFocus={() => onFocus?.(inputRef?.current)}
       />
       {secureTextEntry && (
         <TouchableOpacity
@@ -68,7 +73,7 @@ export default function InputCadastro({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 42,
+    height: 52,
     marginBottom: 8,
     paddingHorizontal: 12,
     borderRadius: 7,
@@ -88,7 +93,7 @@ const styles = StyleSheet.create({
     height: '100%',
     padding: 0,
     color: '#333333',
-    fontSize: 12,
+    fontSize: rem(1),
     fontFamily: 'Inter_400Regular',
     outlineStyle: 'none',
   },

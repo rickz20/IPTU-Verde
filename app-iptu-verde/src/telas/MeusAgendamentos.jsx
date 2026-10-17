@@ -1,3 +1,4 @@
+import { rem } from '../utils/typography';
 import { useState } from 'react';
 import {
   ScrollView,
@@ -72,14 +73,14 @@ const styles = StyleSheet.create({
   },
   titulo: {
     color: CORES.texto,
-    fontSize: 19,
-    lineHeight: 24,
+    fontSize: rem(1.25),
+    lineHeight: rem(1.5),
     fontFamily: 'Alexandria_700Bold',
   },
   descricao: {
     color: CORES.texto,
-    fontSize: 9,
-    lineHeight: 13,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_400Regular',
   },
   lista: {

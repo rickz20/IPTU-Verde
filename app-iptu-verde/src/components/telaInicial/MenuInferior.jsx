@@ -1,3 +1,4 @@
+import { rem } from '../../utils/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CORES } from './tema';
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
   },
   fundoIconeMenu: {
     minWidth: 48,
-    height: 28,
+    height: 32,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
@@ -74,12 +75,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#7F9C08',
   },
   iconeMenu: {
-    fontSize: 24,
-    lineHeight: 27,
+    fontSize: rem(1.625),
+    lineHeight: rem(1.875),
     color: CORES.branco,
   },
   textoMenu: {
-    fontSize: 11,
+    fontSize: rem(1),
     color: CORES.branco,
     fontFamily: 'Inter_400Regular',
   },

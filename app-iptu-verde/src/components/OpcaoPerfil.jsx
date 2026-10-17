@@ -1,3 +1,4 @@
+import { rem } from '../utils/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import IconePerfil from './IconePerfil';
 import { CORES } from './telaInicial/tema';
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
   },
   titulo: {
     flex: 1,
-    fontSize: 14,
+    fontSize: rem(1),
     fontFamily: 'Inter_400Regular',
   },
   seta: {
@@ -48,8 +49,8 @@ const styles = StyleSheet.create({
   },
   caractereSeta: {
     color: '#C6C4BF',
-    fontSize: 28,
-    lineHeight: 30,
+    fontSize: rem(1.75),
+    lineHeight: rem(1.875),
     fontFamily: 'Inter_400Regular',
   },
 });

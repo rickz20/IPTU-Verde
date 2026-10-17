@@ -1,3 +1,4 @@
+import { rem } from '../utils/typography';
 
 import { useState } from 'react';
 import {
@@ -187,12 +188,12 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   tituloSecao: {
-    fontSize: 21,
+    fontSize: rem(1.375),
     color: CORES.texto,
     fontFamily: 'Alexandria_700Bold',
   },
   subtituloSecao: {
-    fontSize: 11,
+    fontSize: rem(1),
     color: CORES.texto,
     fontFamily: 'Inter_400Regular',
     marginBottom: 12,
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   linkVerMais: {
-    fontSize: 10,
+    fontSize: rem(1),
     color: CORES.verdeEscuro,
     fontFamily: 'Inter_700Bold',
   },

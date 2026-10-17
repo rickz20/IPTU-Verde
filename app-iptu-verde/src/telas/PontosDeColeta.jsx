@@ -1,3 +1,4 @@
+import { rem } from '../utils/typography';
 import {
   ScrollView,
   StatusBar,
@@ -62,16 +63,16 @@ const styles = StyleSheet.create({
   titulo: {
     flex: 1,
     color: CORES.texto,
-    fontSize: 20,
-    lineHeight: 25,
+    fontSize: rem(1.25),
+    lineHeight: rem(1.625),
     fontFamily: 'Alexandria_700Bold',
   },
   descricao: {
     marginTop: 14,
     marginBottom: 28,
     color: CORES.texto,
-    fontSize: 11,
-    lineHeight: 17,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_400Regular',
   },
   listaPontos: {

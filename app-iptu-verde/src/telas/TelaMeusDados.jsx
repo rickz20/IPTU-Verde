@@ -1,3 +1,4 @@
+import { rem } from '../utils/typography';
 import {
   ScrollView,
   StatusBar,
@@ -58,14 +59,14 @@ const styles = StyleSheet.create({
   },
   titulo: {
     color: CORES.texto,
-    fontSize: 18,
+    fontSize: rem(1.25),
     fontFamily: 'Alexandria_700Bold',
   },
   tituloSecao: {
     marginTop: 38,
     marginBottom: 16,
     color: CORES.texto,
-    fontSize: 17,
+    fontSize: rem(1.25),
     fontFamily: 'Alexandria_700Bold',
   },
   lista: {
@@ -79,13 +80,13 @@ const styles = StyleSheet.create({
   },
   rotulo: {
     color: CORES.textoSecundario,
-    fontSize: 11,
+    fontSize: rem(1),
     fontFamily: 'Inter_400Regular',
   },
   valor: {
     marginTop: 4,
     color: CORES.texto,
-    fontSize: 14,
+    fontSize: rem(1),
     fontFamily: 'Inter_700Bold',
   },
 });
