@@ -3,9 +3,15 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 const PRIMARY_COLOR = '#94B310';
 
-export default function Button({ title, onPress }) {
+export default function Button({ title, onPress, disabled = false }) {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity
+      style={[styles.button, disabled && styles.buttonDisabled]}
+      onPress={onPress}
+      activeOpacity={0.8}
+      disabled={disabled}
+      accessibilityState={{ disabled }}
+    >
       <Text style={styles.text}>{title}</Text>
     </TouchableOpacity>
   );
@@ -20,6 +26,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 10,
     backgroundColor: PRIMARY_COLOR,
+  },
+  buttonDisabled: {
+    opacity: 0.65,
   },
   text: {
     color: '#FFFFFF',

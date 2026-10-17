@@ -16,6 +16,7 @@ import Input from '../components/Input';
 import InputCadastro from '../components/InputCadastro';
 import AlertIcon from '../../assets/alert-circle.svg';
 import TelaInicial from './TelaInicial';
+import { apiRequest } from '../services/api';
 
 const PRIMARY_COLOR = '#94B310';
 const INVALID_EMAIL_ERROR = 'E-mail inválido.';
@@ -60,6 +61,8 @@ export default function Login() {
   const [successMessage, setSuccessMessage] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [showHome, setShowHome] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [session, setSession] = useState(null);
   const isLogin = activeTab === 'Login';
   const scrollViewRef = useRef(null);
   const focusedInputRef = useRef(null);
@@ -167,6 +170,7 @@ export default function Login() {
 
   function handleTabChange(tab) {
     setActiveTab(tab);
+    setSession(null);
     setErrorMessage('');
     setSuccessMessage('');
     setFieldErrors({});
@@ -253,7 +257,7 @@ export default function Login() {
     }
   }
 
-  function handleLogin() {
+  async function handleLogin() {
     const hasEmail = email.trim().length > 0;
     const hasPassword = password.trim().length > 0;
     const errors = {
@@ -282,11 +286,37 @@ export default function Login() {
     setErrorMessage('');
     setFieldErrors({});
     setSuccessMessage('');
-    setShowHome(true);
+    setIsSubmitting(true);
+
+    try {
+      const result = await apiRequest('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email: email.trim(), senha: password }),
+      });
+
+      setSession(result);
+      setPassword('');
+
+      if (result.usuario.tipo === 'pagador') {
+        setShowHome(true);
+      } else if (result.usuario.tipo === 'adm') {
+        setSuccessMessage(
+          'Acesso de administrador confirmado. O painel administrativo será disponibilizado em breve.',
+        );
+      } else {
+        setSession(null);
+        setErrorMessage('O tipo desta conta não é compatível com o aplicativo.');
+      }
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function handleLogout() {
     setShowHome(false);
+    setSession(null);
     setActiveTab('Login');
     setErrorMessage('');
     setSuccessMessage('');
@@ -299,13 +329,13 @@ export default function Login() {
     setConfirmPassword('');
   }
 
-  function handleRegistration() {
+  async function handleRegistration() {
     const errors = {
       name: !name.trim(),
       cpf: cpf.replace(/\D/g, '').length !== 11,
       phone: ![10, 11].includes(phone.replace(/\D/g, '').length),
       email: !isValidEmail(email),
-      password: !password.trim(),
+      password: password.length < 8,
       confirmPassword: !confirmPassword.trim(),
     };
     if (
@@ -344,23 +374,50 @@ export default function Login() {
         return;
       }
       if (errors.password || errors.confirmPassword) {
-        setErrorMessage('As senhas não conferem.');
+        setErrorMessage(
+          errors.password
+            ? 'A senha deve ter pelo menos 8 caracteres.'
+            : 'As senhas não conferem.',
+        );
       }
       return;
     }
 
     setErrorMessage('');
     setFieldErrors({});
-    setSuccessMessage('Cadastro realizado! Faça login para continuar.');
-    setConfirmPassword('');
-    setName('');
-    setCpf('');
-    setPhone('');
-    setActiveTab('Login');
+    setIsSubmitting(true);
+
+    try {
+      const result = await apiRequest('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          cpf: cpf.replace(/\D/g, ''),
+          email: email.trim(),
+          nome: name.trim(),
+          senha: password,
+          telefone: phone,
+        }),
+      });
+
+      setSuccessMessage(result.mensagem);
+      setConfirmPassword('');
+      setName('');
+      setCpf('');
+      setPhone('');
+      setPassword('');
+      setSession(null);
+      setActiveTab('Login');
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   if (showHome) {
-    return <TelaInicial onSair={handleLogout} />;
+    if (session?.usuario?.tipo === 'pagador') {
+      return <TelaInicial onSair={handleLogout} />;
+    }
   }
 
   return (
@@ -396,6 +453,7 @@ export default function Login() {
                   style={[styles.tab, isActive && styles.activeTab]}
                   onPress={() => handleTabChange(tab)}
                   activeOpacity={0.8}
+                  disabled={isSubmitting}
                 >
                   <Text style={[styles.tabText, isActive && styles.activeTabText]}>
                     {tab}
@@ -485,8 +543,15 @@ export default function Login() {
           )}
 
           <Button
-            title={isLogin ? 'Entrar' : 'Continuar'}
+            title={
+              isSubmitting
+                ? 'Aguarde...'
+                : isLogin
+                  ? 'Entrar'
+                  : 'Continuar'
+            }
             onPress={isLogin ? handleLogin : handleRegistration}
+            disabled={isSubmitting}
           />
         </View>
       </ScrollView>
