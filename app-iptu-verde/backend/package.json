@@ -1,0 +1,21 @@
+{
+  "name": "iptu-verde-backend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "check": "node --check src/server.js && node --check src/app.js && node --check src/routes/authRoutes.js && node --check src/services/authService.js && node --check src/repositories/userRepository.js && node --check src/config/env.js && node --check src/config/firebaseAdmin.js && node --check scripts/migratePasswords.js",
+    "migrate:passwords": "node scripts/migratePasswords.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "firebase-admin": "^14.5.0",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
