@@ -1,3 +1,4 @@
+import { rem } from '../../utils/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import { CORES } from './tema';
 
@@ -32,12 +33,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   porcentagem: {
-    fontSize: 25,
+    fontSize: rem(1.625),
     color: CORES.texto,
     fontFamily: 'Alexandria_700Bold',
   },
   textoDesconto: {
-    fontSize: 7,
+    fontSize: rem(0.75),
+    lineHeight: rem(0.875),
     textAlign: 'center',
     color: CORES.texto,
     fontFamily: 'Inter_400Regular',

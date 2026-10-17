@@ -1,3 +1,4 @@
+import { rem } from '../utils/typography';
 import { useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import LockIcon from '../../assets/lock.svg';
@@ -13,7 +14,9 @@ export default function Input({
   value,
   onChangeText,
   onBlur,
+  onFocus,
   hasError = false,
+  inputRef,
 }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const isPassword = secureTextEntry || type === 'password';
@@ -22,6 +25,7 @@ export default function Input({
     <View style={[styles.container, hasError && styles.containerError]}>
       {isPassword ? <LockIcon width={20} height={20} /> : <MailIcon width={20} height={20} />}
       <TextInput
+        ref={inputRef}
         style={styles.input}
         placeholder={placeholder}
         placeholderTextColor="#666666"
@@ -31,6 +35,7 @@ export default function Input({
         value={value}
         onChangeText={onChangeText}
         onBlur={onBlur}
+        onFocus={() => onFocus?.(inputRef?.current)}
         underlineColorAndroid="transparent"
       />
       {isPassword && (
@@ -51,7 +56,7 @@ export default function Input({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 42,
+    height: 54,
     marginBottom: 10,
     paddingHorizontal: 14,
     flexDirection: 'row',
@@ -68,7 +73,7 @@ const styles = StyleSheet.create({
     height: '100%',
     marginLeft: 12,
     color: '#333333',
-    fontSize: 14,
+    fontSize: rem(1.125),
     fontFamily: 'Inter_400Regular',
     borderWidth: 0,
     outlineStyle: 'none',

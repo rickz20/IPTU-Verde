@@ -1,3 +1,4 @@
+import { rem } from '../utils/typography';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 const PRIMARY_COLOR = '#94B310';
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#FFFFFF',
-    fontSize: 20,
+    fontSize: rem(1.25),
     fontFamily: 'Inter_700Bold',
   },
 });

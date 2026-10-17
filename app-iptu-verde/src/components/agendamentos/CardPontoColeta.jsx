@@ -1,3 +1,4 @@
+import { rem } from '../../utils/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import MapaPontoColeta from './MapaPontoColeta';
 import { CORES } from '../telaInicial/tema';
@@ -65,45 +66,45 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   iconeLocalizacao: {
-    fontSize: 15,
+    fontSize: rem(1),
     color: CORES.verdeEscuro,
   },
   nome: {
     flex: 1,
     color: '#111111',
-    fontSize: 14,
+    fontSize: rem(1),
     fontFamily: 'Alexandria_700Bold',
   },
   endereco: {
     color: '#111111',
-    fontSize: 10,
-    lineHeight: 12,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_700Bold',
   },
   cidade: {
     marginTop: 2,
     color: CORES.textoSecundario,
-    fontSize: 9,
-    lineHeight: 11,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_400Regular',
   },
   referencia: {
     color: CORES.textoSecundario,
-    fontSize: 9,
-    lineHeight: 11,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_400Regular',
   },
   subtituloHorario: {
     marginTop: 5,
     color: '#111111',
-    fontSize: 10,
-    lineHeight: 13,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_700Bold',
   },
   horario: {
     color: CORES.textoSecundario,
-    fontSize: 9,
-    lineHeight: 12,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_400Regular',
   },
   botaoAgendar: {
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
   },
   textoBotao: {
     color: CORES.branco,
-    fontSize: 14,
+    fontSize: rem(1),
     fontFamily: 'Inter_700Bold',
   },
 });

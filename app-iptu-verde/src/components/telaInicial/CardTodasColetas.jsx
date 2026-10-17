@@ -1,3 +1,4 @@
+import { rem } from '../../utils/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { CORES } from './tema';
@@ -92,14 +93,14 @@ const styles = StyleSheet.create({
   titulo: {
     marginBottom: 5,
     color: CORES.texto,
-    fontSize: 13,
-    lineHeight: 17,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Alexandria_700Bold',
   },
   informacao: {
     color: CORES.texto,
-    fontSize: 9,
-    lineHeight: 13,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_400Regular',
   },
   destaque: {
@@ -113,18 +114,18 @@ const styles = StyleSheet.create({
   },
   endereco: {
     color: CORES.textoSecundario,
-    fontSize: 8,
-    lineHeight: 11,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_400Regular',
   },
   data: {
-    minWidth: 34,
+    minWidth: 52,
     alignItems: 'flex-end',
   },
   textoData: {
     color: CORES.textoSecundario,
-    fontSize: 9,
-    lineHeight: 13,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_400Regular',
   },
 });

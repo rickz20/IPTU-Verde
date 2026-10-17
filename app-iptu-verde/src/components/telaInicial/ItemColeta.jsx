@@ -1,3 +1,4 @@
+import { rem } from '../../utils/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CORES } from './tema';
 
@@ -50,14 +51,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconeUsuario: {
-    fontSize: 23,
+    fontSize: rem(1.5),
     color: CORES.branco,
   },
   dadosColeta: {
     flex: 1,
   },
   nomeColeta: {
-    fontSize: 12,
+    fontSize: rem(1),
     color: CORES.texto,
     fontFamily: 'Inter_700Bold',
   },
@@ -68,11 +69,11 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   iconeLocalizacao: {
-    fontSize: 10,
+    fontSize: rem(0.75),
     color: CORES.verdeEscuro,
   },
   enderecoColeta: {
-    fontSize: 10,
+    fontSize: rem(1),
     color: CORES.textoSecundario,
     fontFamily: 'Inter_400Regular',
   },
@@ -80,8 +81,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   textoData: {
-    fontSize: 10,
-    lineHeight: 14,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     color: CORES.textoSecundario,
     fontFamily: 'Inter_400Regular',
   },

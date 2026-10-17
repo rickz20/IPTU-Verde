@@ -1,3 +1,4 @@
+import { rem } from '../../utils/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CORES } from './tema';
 
@@ -40,8 +41,8 @@ const styles = StyleSheet.create({
   },
   setaCartao: {
     alignSelf: 'flex-end',
-    fontSize: 28,
-    lineHeight: 28,
+    fontSize: rem(1.75),
+    lineHeight: rem(1.75),
     color: CORES.branco,
   },
   ilustracaoAcesso: {
@@ -49,19 +50,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconeAcesso: {
-    fontSize: 38,
+    fontSize: rem(2.375),
     color: '#FFFFFF',
     opacity: 0.24,
   },
   tituloAcesso: {
-    fontSize: 14,
-    lineHeight: 19,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     color: CORES.branco,
     fontFamily: 'Alexandria_700Bold',
   },
   descricaoAcesso: {
-    fontSize: 8,
-    lineHeight: 11,
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     color: CORES.branco,
     fontFamily: 'Inter_400Regular',
   },

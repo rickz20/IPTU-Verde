@@ -1,3 +1,4 @@
+import { rem } from '../../utils/typography';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { CORES } from './tema';
 
@@ -71,8 +72,8 @@ const styles = StyleSheet.create({
   },
   sino: {
     color: CORES.branco,
-    fontSize: 20,
-    lineHeight: 20,
+    fontSize: rem(1.25),
+    lineHeight: rem(1.25),
   },
   badgeNotificacao: {
     position: 'absolute',
@@ -90,8 +91,8 @@ const styles = StyleSheet.create({
   },
   badgeTexto: {
     color: CORES.branco,
-    fontSize: 10,
+    fontSize: rem(1),
     fontFamily: 'Inter_700Bold',
-    lineHeight: 10,
+    lineHeight: rem(1.25),
   },
 });

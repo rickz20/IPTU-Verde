@@ -1,3 +1,4 @@
+import { rem } from '../utils/typography';
 import { useState } from 'react';
 import {
   Modal,
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
   nome: {
     marginTop: 16,
     color: CORES.texto,
-    fontSize: 16,
+    fontSize: rem(1.125),
     fontFamily: 'Alexandria_700Bold',
   },
   opcoes: {
@@ -203,13 +204,13 @@ const styles = StyleSheet.create({
   },
   modalTitulo: {
     color: CORES.texto,
-    fontSize: 18,
+    fontSize: rem(1.125),
     fontFamily: 'Alexandria_700Bold',
     marginBottom: 5,
   },
   modalDescricao: {
     color: CORES.textoSecundario,
-    fontSize: 12,
+    fontSize: rem(1),
     fontFamily: 'Inter_400Regular',
     textAlign: 'center',
     marginBottom: 18,
@@ -229,7 +230,7 @@ const styles = StyleSheet.create({
   },
   modalTextoBotao: {
     color: CORES.branco,
-    fontSize: 13,
+    fontSize: rem(1),
     fontFamily: 'Inter_700Bold',
   },
 });

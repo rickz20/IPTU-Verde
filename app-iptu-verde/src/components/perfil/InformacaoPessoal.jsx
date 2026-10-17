@@ -1,3 +1,4 @@
+import { rem } from '../../utils/typography';
 import { StyleSheet, Text } from 'react-native';
 import { CORES } from '../telaInicial/tema';
 
@@ -13,8 +14,8 @@ export default function InformacaoPessoal({ titulo, valor }) {
 const styles = StyleSheet.create({
   texto: {
     color: CORES.textoSecundario,
-    fontSize: 12,
-    lineHeight: 21,
+    fontSize: rem(1),
+    lineHeight: rem(1.5),
     fontFamily: 'Inter_400Regular',
   },
   titulo: {
