@@ -1,7 +1,6 @@
 import { rem } from '../utils/typography';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Image,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -15,6 +14,7 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import InputCadastro from '../components/InputCadastro';
 import AlertIcon from '../../assets/alert-circle.svg';
+import LogoIptuVerde from '../../assets/logo iptuverde.svg';
 import TelaInicial from './TelaInicial';
 import { apiRequest } from '../services/api';
 
@@ -22,6 +22,14 @@ const PRIMARY_COLOR = '#94B310';
 const INVALID_EMAIL_ERROR = 'E-mail inválido.';
 const EMAIL_REQUIRED_ERROR = 'Digite seu e-mail.';
 const REQUIRED_FIELDS_ERROR = 'Preencha todos os campos.';
+const VINCULO_DESCRIPTIONS = {
+  proprietario:
+    'O imóvel é seu. O desconto será aplicado diretamente no seu carnê do IPTU.',
+  inquilino:
+    'Você mora de aluguel e paga o IPTU. O imposto do imóvel pode ou não estar associado a você.',
+  residente:
+    'Você mora no local com a família ou colegas, mas o IPTU da casa onde vive não está associado a você.',
+};
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
@@ -57,6 +65,14 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [registrationStep, setRegistrationStep] = useState('personal');
+  const [cep, setCep] = useState('');
+  const [rua, setRua] = useState('');
+  const [numero, setNumero] = useState('');
+  const [bairro, setBairro] = useState('');
+  const [complemento, setComplemento] = useState('');
+  const [inscricaoImobiliaria, setInscricaoImobiliaria] = useState('');
+  const [vinculo, setVinculo] = useState('proprietario');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
@@ -76,6 +92,14 @@ export default function Login() {
     email: useRef(null),
     password: useRef(null),
     confirmPassword: useRef(null),
+  };
+  const propertyInputRefs = {
+    cep: useRef(null),
+    rua: useRef(null),
+    numero: useRef(null),
+    bairro: useRef(null),
+    complemento: useRef(null),
+    inscricaoImobiliaria: useRef(null),
   };
 
   const centerFocusedInput = useCallback(() => {
@@ -170,6 +194,7 @@ export default function Login() {
 
   function handleTabChange(tab) {
     setActiveTab(tab);
+    setRegistrationStep('personal');
     setSession(null);
     setErrorMessage('');
     setSuccessMessage('');
@@ -327,9 +352,17 @@ export default function Login() {
     setEmail('');
     setPassword('');
     setConfirmPassword('');
+    setCep('');
+    setRua('');
+    setNumero('');
+    setBairro('');
+    setComplemento('');
+    setInscricaoImobiliaria('');
+    setVinculo('proprietario');
+    setRegistrationStep('personal');
   }
 
-  async function handleRegistration() {
+  function handleRegistration() {
     const errors = {
       name: !name.trim(),
       cpf: cpf.replace(/\D/g, '').length !== 11,
@@ -385,6 +418,27 @@ export default function Login() {
 
     setErrorMessage('');
     setFieldErrors({});
+    Keyboard.dismiss();
+    setRegistrationStep('property');
+  }
+
+  async function handleCompleteRegistration() {
+    const propertyErrors = {
+      cep: cep.replace(/\D/g, '').length !== 8,
+      rua: rua.trim().length < 2,
+      numero: !numero.trim(),
+      bairro: bairro.trim().length < 2,
+      inscricaoImobiliaria: !inscricaoImobiliaria.trim(),
+    };
+    setFieldErrors(propertyErrors);
+
+    if (Object.values(propertyErrors).some(Boolean)) {
+      setErrorMessage('Preencha todos os dados obrigatórios do imóvel.');
+      return;
+    }
+
+    setErrorMessage('');
+    Keyboard.dismiss();
     setIsSubmitting(true);
 
     try {
@@ -396,6 +450,15 @@ export default function Login() {
           nome: name.trim(),
           senha: password,
           telefone: phone,
+          imovel: {
+            cep: cep.replace(/\D/g, ''),
+            rua: rua.trim(),
+            numero: numero.trim(),
+            bairro: bairro.trim(),
+            complemento: complemento.trim(),
+            inscricaoImobiliaria: inscricaoImobiliaria.trim(),
+            vinculo,
+          },
         }),
       });
 
@@ -405,14 +468,79 @@ export default function Login() {
       setCpf('');
       setPhone('');
       setPassword('');
+      setCep('');
+      setRua('');
+      setNumero('');
+      setBairro('');
+      setComplemento('');
+      setInscricaoImobiliaria('');
+      setVinculo('proprietario');
+      setRegistrationStep('personal');
       setSession(null);
       setActiveTab('Login');
+      setFieldErrors({});
     } catch (error) {
       setErrorMessage(error.message);
     } finally {
       setIsSubmitting(false);
     }
   }
+
+  function voltarParaDadosPessoais() {
+    Keyboard.dismiss();
+    setErrorMessage('');
+    setFieldErrors({});
+    setRegistrationStep('personal');
+  }
+
+  function atualizarCep(value) {
+    const digits = value.replace(/\D/g, '').slice(0, 8);
+    setCep(
+      digits.length > 5
+        ? `${digits.slice(0, 5)}-${digits.slice(5)}`
+        : digits,
+    );
+  }
+
+  const propertyFields = [
+    {
+      key: 'cep',
+      placeholder: 'CEP',
+      value: cep,
+      onChangeText: atualizarCep,
+      keyboardType: 'numeric',
+    },
+    {
+      key: 'rua',
+      placeholder: 'Rua',
+      value: rua,
+      onChangeText: setRua,
+    },
+    {
+      key: 'numero',
+      placeholder: 'Número',
+      value: numero,
+      onChangeText: setNumero,
+    },
+    {
+      key: 'bairro',
+      placeholder: 'Bairro',
+      value: bairro,
+      onChangeText: setBairro,
+    },
+    {
+      key: 'complemento',
+      placeholder: 'Complemento',
+      value: complemento,
+      onChangeText: setComplemento,
+    },
+    {
+      key: 'inscricaoImobiliaria',
+      placeholder: 'Número de inscrição',
+      value: inscricaoImobiliaria,
+      onChangeText: setInscricaoImobiliaria,
+    },
+  ];
 
   if (showHome) {
     if (session?.usuario?.tipo === 'pagador') {
@@ -437,122 +565,220 @@ export default function Login() {
         }}
       >
         <View style={styles.content}>
-          <Image
-            source={require('../../assets/image 4.png')}
+          <LogoIptuVerde
             style={styles.logo}
-            resizeMode="contain"
+            accessibilityLabel="Logo IPTU Verde"
           />
 
-          <View style={styles.tabs}>
-            {['Login', 'Cadastro'].map((tab) => {
-              const isActive = activeTab === tab;
+          {!(activeTab === 'Cadastro' && registrationStep === 'property') ? (
+            <View style={styles.tabs}>
+              {['Login', 'Cadastro'].map((tab) => {
+                const isActive = activeTab === tab;
 
-              return (
-                <TouchableOpacity
-                  key={tab}
-                  style={[styles.tab, isActive && styles.activeTab]}
-                  onPress={() => handleTabChange(tab)}
-                  activeOpacity={0.8}
-                  disabled={isSubmitting}
-                >
-                  <Text style={[styles.tabText, isActive && styles.activeTabText]}>
-                    {tab}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+                return (
+                  <TouchableOpacity
+                    key={tab}
+                    style={[styles.tab, isActive && styles.activeTab]}
+                    onPress={() => handleTabChange(tab)}
+                    activeOpacity={0.8}
+                    disabled={isSubmitting}
+                  >
+                    <Text
+                      style={[
+                        styles.tabText,
+                        isActive && styles.activeTabText,
+                      ]}
+                    >
+                      {tab}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          ) : null}
 
-          <View style={styles.introduction}>
-            <Text style={styles.title}>
-              {isLogin ? 'Faça login para continuar' : 'Preencha os dados a seguir para prosseguir.'}
-            </Text>
-            {isLogin && (
-              <Text style={styles.description}>
-                Acesse sua conta para continuar usando o IPTU Verde.
-              </Text>
-            )}
-          </View>
-
-          {!isLogin && <Text style={styles.sectionTitle}>Dados pessoais</Text>}
-
-          <View style={[styles.form, !isLogin && styles.registrationForm]}>
-            {Boolean(errorMessage) && (
-              <View style={styles.errorMessage} accessibilityRole="alert">
-                <AlertIcon width={20} height={20} />
-                <Text style={styles.errorText}>{errorMessage}</Text>
-              </View>
-            )}
-            {Boolean(successMessage) && (
-              <View style={styles.successMessage} accessibilityRole="alert">
-                <Text style={styles.successText}>{successMessage}</Text>
-              </View>
-            )}
-
-            {isLogin ? (
-              <>
-                <Input
-                  placeholder="E-mail"
-                  inputRef={emailInputRef}
-                  onFocus={handleInputFocus}
-                  keyboardType="email-address"
-                  value={email}
-                  onChangeText={handleEmailChange}
-                  onBlur={validateEmail}
-                  hasError={Boolean(
-                    fieldErrors.loginEmail ||
-                      errorMessage === INVALID_EMAIL_ERROR ||
-                      errorMessage === EMAIL_REQUIRED_ERROR,
-                  )}
-                />
-                <Input
-                  placeholder="Senha"
-                  inputRef={passwordInputRef}
-                  onFocus={handleInputFocus}
-                  secureTextEntry
-                  type="password"
-                  value={password}
-                  onChangeText={handleLoginPasswordChange}
-                  hasError={Boolean(fieldErrors.loginPassword)}
-                />
-              </>
-            ) : (
-              registrationFields.map((field) => (
+          {activeTab === 'Cadastro' && registrationStep === 'property' ? (
+            <View style={styles.propertyForm}>
+              <Text style={styles.sectionTitle}>Dados do imóvel</Text>
+              {propertyFields.map((field) => (
                 <InputCadastro
                   key={field.key}
-                  placeholder={field.placeholder}
-                  inputRef={registrationInputRefs[field.key]}
+                  inputRef={propertyInputRefs[field.key]}
                   onFocus={handleInputFocus}
+                  placeholder={field.placeholder}
                   value={field.value}
-                  onChangeText={(value) =>
-                    handleRegistrationFieldChange(field, value)
-                  }
+                  onChangeText={field.onChangeText}
                   keyboardType={field.keyboardType}
-                  autoCapitalize={field.autoCapitalize}
-                  secureTextEntry={field.secureTextEntry}
-                  hasError={fieldErrors[field.key]}
+                  hasError={Boolean(fieldErrors[field.key])}
                 />
-              ))
-            )}
-          </View>
+              ))}
 
-          {isLogin && (
-            <TouchableOpacity style={styles.forgotPassword} activeOpacity={0.7}>
-              <Text style={styles.forgotPasswordText}>Esqueceu a senha?</Text>
-            </TouchableOpacity>
+              <Text style={styles.sectionTitle}>Vínculo imobiliário</Text>
+              <Text style={styles.propertyExplanation}>
+                Determine quem está usando a conta e quem é responsável fiscal
+                pelo imóvel.
+              </Text>
+              <View style={styles.vinculoOptions}>
+                {[
+                  ['proprietario', 'Proprietário'],
+                  ['inquilino', 'Inquilino'],
+                  ['residente', 'Residente'],
+                ].map(([value, label]) => (
+                  <TouchableOpacity
+                    key={value}
+                    style={[
+                      styles.vinculoOption,
+                      vinculo === value && styles.vinculoOptionSelected,
+                    ]}
+                    onPress={() => setVinculo(value)}
+                    disabled={isSubmitting}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: vinculo === value }}
+                  >
+                    <Text
+                      style={[
+                        styles.vinculoOptionText,
+                        vinculo === value && styles.vinculoOptionTextSelected,
+                      ]}
+                    >
+                      {label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <View style={styles.propertyNotice}>
+                <Text style={styles.propertyNoticeText}>
+                  {VINCULO_DESCRIPTIONS[vinculo]}
+                </Text>
+              </View>
+
+              {Boolean(errorMessage) && (
+                <View style={styles.errorMessage} accessibilityRole="alert">
+                  <AlertIcon width={20} height={20} />
+                  <Text style={styles.errorText}>{errorMessage}</Text>
+                </View>
+              )}
+
+              <Button
+                title={isSubmitting ? 'Aguarde...' : 'Finalizar Cadastro'}
+                onPress={handleCompleteRegistration}
+                disabled={isSubmitting}
+              />
+              <TouchableOpacity
+                style={styles.backToPersonal}
+                onPress={voltarParaDadosPessoais}
+                disabled={isSubmitting}
+                accessibilityRole="button"
+              >
+                <Text style={styles.backToPersonalText}>
+                  Voltar aos dados pessoais
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <>
+              <View style={styles.introduction}>
+              <Text style={styles.title}>
+                {isLogin
+                  ? 'Faça login para continuar'
+                  : 'Preencha os dados a seguir para prosseguir.'}
+              </Text>
+              {isLogin && (
+                <Text style={styles.description}>
+                  Acesse sua conta para continuar usando o IPTU Verde.
+                </Text>
+              )}
+              </View>
+
+              {!isLogin && (
+              <Text style={styles.sectionTitle}>Dados pessoais</Text>
+              )}
+
+              <View style={[styles.form, !isLogin && styles.registrationForm]}>
+              {Boolean(errorMessage) && (
+                <View style={styles.errorMessage} accessibilityRole="alert">
+                  <AlertIcon width={20} height={20} />
+                  <Text style={styles.errorText}>{errorMessage}</Text>
+                </View>
+              )}
+              {Boolean(successMessage) && (
+                <View style={styles.successMessage} accessibilityRole="alert">
+                  <Text style={styles.successText}>{successMessage}</Text>
+                </View>
+              )}
+
+              {isLogin ? (
+                <>
+                  <Input
+                    placeholder="E-mail"
+                    inputRef={emailInputRef}
+                    onFocus={handleInputFocus}
+                    keyboardType="email-address"
+                    value={email}
+                    onChangeText={handleEmailChange}
+                    onBlur={validateEmail}
+                    hasError={Boolean(
+                      fieldErrors.loginEmail ||
+                        errorMessage === INVALID_EMAIL_ERROR ||
+                        errorMessage === EMAIL_REQUIRED_ERROR,
+                    )}
+                  />
+                  <Input
+                    placeholder="Senha"
+                    inputRef={passwordInputRef}
+                    onFocus={handleInputFocus}
+                    secureTextEntry
+                    type="password"
+                    value={password}
+                    onChangeText={handleLoginPasswordChange}
+                    hasError={Boolean(fieldErrors.loginPassword)}
+                  />
+                </>
+              ) : (
+                registrationFields.map((field) => (
+                  <InputCadastro
+                    key={field.key}
+                    placeholder={field.placeholder}
+                    inputRef={registrationInputRefs[field.key]}
+                    onFocus={handleInputFocus}
+                    value={field.value}
+                    onChangeText={(value) =>
+                      handleRegistrationFieldChange(field, value)
+                    }
+                    keyboardType={field.keyboardType}
+                    autoCapitalize={field.autoCapitalize}
+                    secureTextEntry={field.secureTextEntry}
+                    hasError={fieldErrors[field.key]}
+                  />
+                ))
+              )}
+              </View>
+
+              {isLogin && (
+              <TouchableOpacity
+                style={styles.forgotPassword}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.forgotPasswordText}>
+                  Esqueceu a senha?
+                </Text>
+              </TouchableOpacity>
+              )}
+
+              <Button
+              title={
+                isSubmitting
+                  ? 'Aguarde...'
+                  : isLogin
+                    ? 'Entrar'
+                    : 'Continuar'
+              }
+              onPress={isLogin ? handleLogin : handleRegistration}
+              disabled={isSubmitting}
+              />
+            </>
           )}
-
-          <Button
-            title={
-              isSubmitting
-                ? 'Aguarde...'
-                : isLogin
-                  ? 'Entrar'
-                  : 'Continuar'
-            }
-            onPress={isLogin ? handleLogin : handleRegistration}
-            disabled={isSubmitting}
-          />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -579,8 +805,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   logo: {
-    width: 150,
-    height: 64,
+    width: 184,
+    height: 56,
     alignSelf: 'center',
     marginBottom: 22,
   },
@@ -636,6 +862,73 @@ const styles = StyleSheet.create({
   },
   registrationForm: {
     marginBottom: 35,
+  },
+  propertyForm: {
+    width: '100%',
+  },
+  propertyExplanation: {
+    marginTop: -4,
+    marginBottom: 14,
+    color: '#333333',
+    fontSize: rem(0.75),
+    lineHeight: rem(1),
+    fontFamily: 'Inter_400Regular',
+  },
+  vinculoOptions: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 6,
+    marginBottom: 12,
+  },
+  vinculoOption: {
+    flex: 1,
+    minHeight: 44,
+    paddingHorizontal: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 9,
+    backgroundColor: '#F0F0F0',
+  },
+  vinculoOptionSelected: {
+    backgroundColor: PRIMARY_COLOR,
+  },
+  vinculoOptionText: {
+    color: '#666666',
+    fontSize: rem(0.75),
+    fontFamily: 'Inter_400Regular',
+    textAlign: 'center',
+  },
+  vinculoOptionTextSelected: {
+    color: '#FFFFFF',
+    fontFamily: 'Inter_700Bold',
+  },
+  propertyNotice: {
+    minHeight: 48,
+    marginBottom: 30,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    backgroundColor: '#E2E2E2',
+  },
+  propertyNoticeText: {
+    color: '#333333',
+    fontSize: rem(0.75),
+    lineHeight: rem(1),
+    textAlign: 'center',
+    fontFamily: 'Inter_400Regular',
+  },
+  backToPersonal: {
+    alignSelf: 'center',
+    marginTop: 14,
+    padding: 8,
+  },
+  backToPersonalText: {
+    color: '#666666',
+    fontSize: rem(0.875),
+    textDecorationLine: 'underline',
+    fontFamily: 'Inter_400Regular',
   },
   errorMessage: {
     minHeight: 40,

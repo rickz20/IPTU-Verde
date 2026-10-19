@@ -69,10 +69,14 @@ web usam `http://localhost:3001`. Em um celular físico, configure
 local do computador, por exemplo `http://192.168.1.25:3001`, e reinicie o Expo.
 O telefone e o computador precisam estar na mesma rede Wi-Fi.
 
-O endpoint `POST /auth/register` aceita `nome`, `cpf`, `telefone`, `email` e
-`senha`. Ele valida os dados, rejeita CPF/e-mail duplicados e salva a senha como
-`senhaHash` com bcrypt; `tipo` não é aceito do cliente. Um cadastro bem-sucedido
-retorna `201` e o app pede que a pessoa faça login.
+O endpoint `POST /auth/register` recebe `nome`, `cpf`, `telefone`, `email`,
+`senha` e `imovel` com `cep`, `rua`, `numero`, `bairro`, `complemento`,
+`inscricaoImobiliaria` e `vinculo` (`proprietario`, `inquilino` ou `residente`).
+Ele valida os dados, rejeita CPF/e-mail duplicados e cria o usuário e o imóvel
+na mesma transação do Firestore. O imóvel recebe o `usuarioId` do novo usuário.
+A senha é salva como `senhaHash` com bcrypt; `tipo` não é aceito do cliente e o
+cadastro público cria somente pagadores. Um cadastro bem-sucedido retorna `201`
+e o app pede que a pessoa faça login.
 
 No login, o endpoint `POST /auth/login` recebe:
 
@@ -115,8 +119,9 @@ usa mais os arrays de demonstração:
   `material`, `entregador`, `responsavel`, `endereco`, `data` e `horario`.
 - `agendamentos/{id}` é criado pelo `POST /agendamentos` e recebe o `usuarioId`
   do token, além de ponto, data, horário, modalidade, materiais e status.
-- `imoveis/{id}`: `usuarioId` (ID do documento do usuário), `endereco`,
-  `bairro`, `cidade`, `inscricaoImobiliaria` e `tipo`.
+- `imoveis/{id}`: `usuarioId` (ID do documento do usuário), `cep`, `rua`,
+  `numero`, `endereco`, `bairro`, `complemento`, `inscricaoImobiliaria`,
+  `vinculo` (`proprietario`, `inquilino` ou `residente`) e `criadoEm`.
 
 A modalidade aceita `ponto` ou `domicilio`; modalidade domiciliar exige
 endereço, e materiais são enviados como uma lista de nomes. A data de

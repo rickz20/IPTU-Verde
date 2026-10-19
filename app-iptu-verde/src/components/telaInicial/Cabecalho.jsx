@@ -1,18 +1,18 @@
 import { rem } from '../../utils/typography';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import IconeNotificacao from '../../../assets/Bell.svg';
+import LogoIptuVerde from '../../../assets/logo iptuverde.svg';
 import { CORES } from './tema';
 
-const LOGO_IPTU_VERDE = require('../../../assets/logo-iptu-verde.png');
-
-export default function Cabecalho({ onNotificacoes = () => {} }) {
+export default function Cabecalho({
+  onNotificacoes = () => {},
+  quantidadeNotificacoes = 0,
+}) {
   return (
     <View style={styles.cabecalho}>
       <View style={styles.marca}>
-        <Image
-          source={LOGO_IPTU_VERDE}
+        <LogoIptuVerde
           style={styles.logoImagem}
-          resizeMode="contain"
           accessibilityLabel="Logo IPTU Verde"
         />
       </View>
@@ -28,9 +28,13 @@ export default function Cabecalho({ onNotificacoes = () => {} }) {
         hitSlop={10}
       >
         <IconeNotificacao width={24} height={24} />
-        <View style={styles.badgeNotificacao}>
-          <Text style={styles.badgeTexto}>3</Text>
-        </View>
+        {quantidadeNotificacoes > 0 ? (
+          <View style={styles.badgeNotificacao}>
+            <Text style={styles.badgeTexto}>
+              {quantidadeNotificacoes > 99 ? '99+' : quantidadeNotificacoes}
+            </Text>
+          </View>
+        ) : null}
       </Pressable>
     </View>
   );
@@ -51,7 +55,7 @@ const styles = StyleSheet.create({
   },
   logoImagem: {
     width: 180,
-    height: 82,
+    height: 50,
   },
   botaoNotificacao: {
     width: 46,

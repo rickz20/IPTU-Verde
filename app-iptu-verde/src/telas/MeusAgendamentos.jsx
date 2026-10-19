@@ -5,6 +5,7 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  Pressable,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,7 +15,7 @@ import MenuInferior from '../components/telaInicial/MenuInferior';
 import { CORES } from '../components/telaInicial/tema';
 import { useApiData } from '../hooks/useApiData';
 
-export default function MeusAgendamentos({ onSelecionarAba, token }) {
+export default function MeusAgendamentos({ onSelecionarAba, onAgendar, token }) {
   const [abaSelecionada, setAbaSelecionada] = useState('agendamentos');
   const {
     data: agendamentos,
@@ -45,6 +46,13 @@ export default function MeusAgendamentos({ onSelecionarAba, token }) {
           <Text style={styles.descricao}>
             Acompanhe por aqui seus agendamentos futuros
           </Text>
+          <Pressable
+            style={styles.botaoAgendar}
+            onPress={onAgendar}
+            accessibilityRole="button"
+          >
+            <Text style={styles.textoBotaoAgendar}>Agendar coleta</Text>
+          </Pressable>
         </View>
 
         <View style={styles.lista}>
@@ -120,6 +128,19 @@ const styles = StyleSheet.create({
     fontSize: rem(1),
     lineHeight: rem(1.25),
     fontFamily: 'Inter_400Regular',
+  },
+  botaoAgendar: {
+    alignSelf: 'flex-start',
+    marginTop: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 9,
+    backgroundColor: CORES.verde,
+  },
+  textoBotaoAgendar: {
+    color: CORES.branco,
+    fontSize: rem(0.875),
+    fontFamily: 'Inter_700Bold',
   },
   lista: {
     gap: 8,

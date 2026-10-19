@@ -5,7 +5,6 @@ import { CORES } from './tema';
 export default function CartaoAcesso({
   titulo,
   descricao,
-  tipo = 'local',
   cor = CORES.verde,
   onPress = () => {},
 }) {
@@ -17,12 +16,7 @@ export default function CartaoAcesso({
       accessibilityLabel={titulo}
     >
       <Text style={styles.setaCartao}>›</Text>
-
-      <View style={styles.ilustracaoAcesso}>
-        <Text style={styles.iconeAcesso}>{tipo === 'local' ? '●' : '♻'}</Text>
-      </View>
-
-      <View>
+      <View style={styles.textosCartao}>
         <Text style={styles.tituloAcesso}>{titulo}</Text>
         <Text style={styles.descricaoAcesso}>{descricao}</Text>
       </View>
@@ -33,35 +27,29 @@ export default function CartaoAcesso({
 const styles = StyleSheet.create({
   cartaoAcesso: {
     flex: 1,
-    minHeight: 172,
+    minHeight: 132,
     borderRadius: 17,
-    padding: 13,
+    padding: 14,
     justifyContent: 'space-between',
     overflow: 'hidden',
   },
+  textosCartao: {
+    gap: 3,
+  },
   setaCartao: {
     alignSelf: 'flex-end',
-    fontSize: rem(1.75),
-    lineHeight: rem(1.75),
+    fontSize: rem(1.625),
+    lineHeight: rem(1.5),
     color: CORES.branco,
   },
-  ilustracaoAcesso: {
-    height: 42,
-    justifyContent: 'center',
-  },
-  iconeAcesso: {
-    fontSize: rem(2.375),
-    color: '#FFFFFF',
-    opacity: 0.24,
-  },
   tituloAcesso: {
-    fontSize: rem(1),
-    lineHeight: rem(1.25),
+    fontSize: rem(1.125),
+    lineHeight: rem(1.375),
     color: CORES.branco,
     fontFamily: 'Alexandria_700Bold',
   },
   descricaoAcesso: {
-    fontSize: rem(1),
+    fontSize: rem(0.75),
     lineHeight: rem(1.25),
     color: CORES.branco,
     fontFamily: 'Inter_400Regular',

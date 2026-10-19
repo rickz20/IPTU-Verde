@@ -4,7 +4,10 @@ import { database } from '../config/firebaseAdmin.js';
 
 const USERS_COLLECTION =
   process.env.FIRESTORE_USERS_COLLECTION?.trim() || 'usuarios';
+const PROPERTIES_COLLECTION =
+  process.env.FIRESTORE_PROPERTIES_COLLECTION?.trim() || 'imoveis';
 const usersCollection = database.collection(USERS_COLLECTION);
+const propertiesCollection = database.collection(PROPERTIES_COLLECTION);
 
 export async function findUserByEmail(email) {
   const snapshot = await usersCollection
@@ -49,6 +52,7 @@ export async function updateUserPassword(id, senhaHash) {
 export async function createPayerUser({
   cpf,
   email,
+  imovel,
   nome,
   senhaHash,
   telefone,
@@ -67,6 +71,7 @@ export async function createPayerUser({
   const emailReference = usersCollection.doc(
     `email-${createHash('sha256').update(email).digest('hex')}`,
   );
+  const propertyReference = propertiesCollection.doc();
 
   await database.runTransaction(async (transaction) => {
     const emailSnapshot = await transaction.get(emailQuery);
@@ -96,5 +101,16 @@ export async function createPayerUser({
       tipo: 'pagador',
       criadoEm: FieldValue.serverTimestamp(),
     });
+    transaction.create(propertyReference, {
+      ...imovel,
+      usuarioId: emailReference.id,
+      endereco: `${imovel.rua}, ${imovel.numero}`,
+      criadoEm: FieldValue.serverTimestamp(),
+    });
   });
+
+  return {
+    usuarioId: emailReference.id,
+    imovelId: propertyReference.id,
+  };
 }

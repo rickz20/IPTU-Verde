@@ -73,11 +73,21 @@ router.post(
   registrationLimiter,
   async (request, response, next) => {
     try {
-      const { cpf, email, nome, senha, telefone } = request.body ?? {};
+      const { cpf, email, imovel, nome, senha, telefone } =
+        request.body ?? {};
       const normalizedCpf =
         typeof cpf === 'string' ? cpf.replace(/\D/g, '') : '';
       const normalizedPhone =
         typeof telefone === 'string' ? telefone.replace(/\D/g, '') : '';
+      const normalizedCep =
+        typeof imovel?.cep === 'string'
+          ? imovel.cep.replace(/\D/g, '')
+          : '';
+      const vinculosValidos = [
+        'proprietario',
+        'inquilino',
+        'residente',
+      ];
 
       if (
         typeof nome !== 'string' ||
@@ -92,17 +102,45 @@ router.post(
         email.length > 254 ||
         !isValidEmail(email) ||
         Buffer.byteLength(senha, 'utf8') < 8 ||
-        Buffer.byteLength(senha, 'utf8') > 72
+        Buffer.byteLength(senha, 'utf8') > 72 ||
+        !imovel ||
+        typeof imovel.rua !== 'string' ||
+        imovel.rua.trim().length < 2 ||
+        imovel.rua.trim().length > 120 ||
+        typeof imovel.numero !== 'string' ||
+        imovel.numero.trim().length < 1 ||
+        imovel.numero.trim().length > 20 ||
+        typeof imovel.bairro !== 'string' ||
+        imovel.bairro.trim().length < 2 ||
+        imovel.bairro.trim().length > 80 ||
+        (imovel.complemento !== undefined &&
+          typeof imovel.complemento !== 'string') ||
+        (typeof imovel.complemento === 'string' &&
+          imovel.complemento.trim().length > 120) ||
+        typeof imovel.inscricaoImobiliaria !== 'string' ||
+        imovel.inscricaoImobiliaria.trim().length < 1 ||
+        imovel.inscricaoImobiliaria.trim().length > 40 ||
+        normalizedCep.length !== 8 ||
+        !vinculosValidos.includes(imovel.vinculo)
       ) {
         return response.status(400).json({
           erro:
-            'Confira os dados: nome, CPF, telefone, e-mail válido e senha de 8 a 72 bytes.',
+            'Confira os dados pessoais e do imóvel. Preencha CEP, rua, número, bairro, inscrição imobiliária e vínculo.',
         });
       }
 
       await registerPayer({
         cpf: normalizedCpf,
         email,
+        imovel: {
+          cep: normalizedCep,
+          rua: imovel.rua.trim(),
+          numero: imovel.numero.trim(),
+          bairro: imovel.bairro.trim(),
+          complemento: imovel.complemento?.trim() ?? '',
+          inscricaoImobiliaria: imovel.inscricaoImobiliaria.trim(),
+          vinculo: imovel.vinculo,
+        },
         nome,
         password: senha,
         telefone: telefone.trim(),

@@ -52,15 +52,25 @@ export default function TelaMeusImoveis({ onVoltar, token }) {
                   </Svg>
                 </View>
                 <Text style={styles.tituloCartao}>
-                  {imovel.tipo ?? 'Imóvel cadastrado'}
+                  {imovel.vinculo
+                    ? `Vínculo: ${formatarVinculo(imovel.vinculo)}`
+                    : imovel.tipo ?? 'Imóvel cadastrado'}
                 </Text>
                 <View style={styles.lista}>
                   {[
                     ['Endereço', imovel.endereco],
+                    ['CEP', imovel.cep],
+                    ['Rua', imovel.rua],
+                    ['Número', imovel.numero],
                     ['Bairro', imovel.bairro],
                     ['Cidade', imovel.cidade],
+                    ['Complemento', imovel.complemento],
                     ['Inscrição imobiliária', imovel.inscricaoImobiliaria],
                     ['Tipo de imóvel', imovel.tipo],
+                    [
+                      'Vínculo imobiliário',
+                      imovel.vinculo ? formatarVinculo(imovel.vinculo) : '',
+                    ],
                   ]
                     .filter(([, valor]) => Boolean(valor))
                     .map(([rotulo, valor]) => (
@@ -76,6 +86,15 @@ export default function TelaMeusImoveis({ onVoltar, token }) {
       </ScrollView>
     </SafeAreaView>
   );
+}
+
+function formatarVinculo(vinculo) {
+  const vinculos = {
+    proprietario: 'Proprietário',
+    inquilino: 'Inquilino',
+    residente: 'Residente',
+  };
+  return vinculos[vinculo] ?? vinculo;
 }
 
 const styles = StyleSheet.create({

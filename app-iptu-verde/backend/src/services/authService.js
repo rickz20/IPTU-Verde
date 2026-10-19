@@ -71,6 +71,7 @@ export function verifyAccessToken(token) {
 export async function registerPayer({
   cpf,
   email,
+  imovel,
   nome,
   password,
   telefone,
@@ -80,6 +81,7 @@ export async function registerPayer({
   await createPayerUser({
     cpf,
     email: email.trim().toLowerCase(),
+    imovel,
     nome: nome.trim(),
     senhaHash,
     telefone: telefone.trim(),

@@ -43,6 +43,9 @@ export default function TelaInicial({ onSair, sessao }) {
     loading: carregandoColetas,
     retry: recarregarColetas,
   } = useApiData('/coletas', 'coletas', sessao?.token, Boolean(sessao?.token));
+  const {
+    data: notificacoes,
+  } = useApiData('/notificacoes', 'notificacoes');
 
   function selecionarAba(aba) {
     setAbaSelecionada(aba);
@@ -131,6 +134,7 @@ export default function TelaInicial({ onSair, sessao }) {
       <MeusAgendamentos
         token={sessao?.token}
         onSelecionarAba={selecionarAba}
+        onAgendar={() => setTelaAtual('tela-agendamento')}
       />
     );
   }
@@ -177,7 +181,10 @@ export default function TelaInicial({ onSair, sessao }) {
         contentContainerStyle={styles.conteudo}
         showsVerticalScrollIndicator={false}
       >
-        <Cabecalho onNotificacoes={() => setTelaAtual('notificacoes')} />
+        <Cabecalho
+          onNotificacoes={() => setTelaAtual('notificacoes')}
+          quantidadeNotificacoes={notificacoes.length}
+        />
 
         <View style={styles.secaoProgresso}>
           <Text style={styles.tituloSecao}>Meu Progresso</Text>
@@ -185,7 +192,11 @@ export default function TelaInicial({ onSair, sessao }) {
             Acompanhe a porcentagem de desconto obtido até agora
           </Text>
 
-          <CartaoProgresso />
+          <CartaoProgresso
+            coletasRealizadas={
+              carregandoColetas || erroColetas ? null : coletas.length
+            }
+          />
         </View>
 
         <View style={styles.secaoColetas}>
@@ -227,22 +238,23 @@ export default function TelaInicial({ onSair, sessao }) {
           </View>
         </View>
 
-        <View style={styles.listaAcessos}>
-          <CartaoAcesso
-            titulo="Pontos de coleta"
-            descricao="Saiba onde estão os pontos de coleta mais próximos da sua casa"
-            tipo="local"
-            cor={CORES.verde}
-            onPress={() => setTelaAtual('tela-agendamento')}
-          />
+        <View style={styles.secaoInforme}>
+          <Text style={styles.tituloSecao}>Informe-se!</Text>
+          <View style={styles.listaAcessos}>
+            <CartaoAcesso
+              titulo="Como reciclar?"
+              descricao="Aprenda a forma certa de separar os seus resíduos!"
+              cor={CORES.amarelo}
+              onPress={() => setTelaAtual('como-reciclar')}
+            />
 
-          <CartaoAcesso
-            titulo="Como reciclar"
-            descricao="Como separar os seus resíduos e quais deles podem ser reciclados"
-            tipo="reciclagem"
-            cor={CORES.amarelo}
-            onPress={() => setTelaAtual('como-reciclar')}
-          />
+            <CartaoAcesso
+              titulo="Como funciona?"
+              descricao="Entenda como funciona o nosso aplicativo!"
+              cor={CORES.amarelo}
+              onPress={() => setTelaAtual('tela-agendamento')}
+            />
+          </View>
         </View>
       </ScrollView>
 
@@ -305,6 +317,10 @@ const styles = StyleSheet.create({
   },
   listaColetas: {
     gap: 4,
+  },
+  secaoInforme: {
+    gap: 10,
+    marginBottom: 8,
   },
   listaAcessos: {
     flexDirection: 'row',
