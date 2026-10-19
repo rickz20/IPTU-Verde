@@ -166,7 +166,10 @@ export default function TelaInicial({ onSair, sessao }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={styles.container}
+      edges={['top', 'left', 'right']}
+    >
       <StatusBar barStyle="dark-content" backgroundColor={CORES.branco} />
 
       <ScrollView

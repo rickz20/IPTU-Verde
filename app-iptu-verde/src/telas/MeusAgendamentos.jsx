@@ -29,7 +29,10 @@ export default function MeusAgendamentos({ onSelecionarAba, token }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={styles.container}
+      edges={['top', 'left', 'right']}
+    >
       <StatusBar barStyle="dark-content" backgroundColor={CORES.branco} />
 
       <ScrollView

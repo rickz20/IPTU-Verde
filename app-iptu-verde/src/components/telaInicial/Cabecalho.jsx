@@ -1,5 +1,6 @@
 import { rem } from '../../utils/typography';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import IconeNotificacao from '../../../assets/Bell.svg';
 import { CORES } from './tema';
 
 const LOGO_IPTU_VERDE = require('../../../assets/logo-iptu-verde.png');
@@ -26,7 +27,7 @@ export default function Cabecalho({ onNotificacoes = () => {} }) {
         accessibilityLabel="Notificações"
         hitSlop={10}
       >
-        <Text style={styles.sino}>🔔</Text>
+        <IconeNotificacao width={24} height={24} />
         <View style={styles.badgeNotificacao}>
           <Text style={styles.badgeTexto}>3</Text>
         </View>
@@ -69,11 +70,6 @@ const styles = StyleSheet.create({
   botaoNotificacaoPressionado: {
     backgroundColor: '#E5B832',
     transform: [{ scale: 0.97 }],
-  },
-  sino: {
-    color: CORES.branco,
-    fontSize: rem(1.25),
-    lineHeight: rem(1.25),
   },
   badgeNotificacao: {
     position: 'absolute',

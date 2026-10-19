@@ -107,7 +107,14 @@ export default function PontosDeColeta({
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={styles.container}
+      edges={
+        onSelecionarAba
+          ? ['top', 'left', 'right']
+          : ['top', 'right', 'bottom', 'left']
+      }
+    >
       <StatusBar barStyle="dark-content" backgroundColor={CORES.branco} />
 
       <ScrollView

@@ -1,12 +1,15 @@
 import { rem } from '../../utils/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import IconeAgendamentos from '../../../assets/Edit Square.svg';
+import IconeInicio from '../../../assets/Home.svg';
+import IconePerfil from '../../../assets/User.svg';
 import { CORES } from './tema';
 
 export const itensMenuPadrao = [
-  { id: 'inicio', icone: '⌂', titulo: 'Início' },
-  { id: 'agendamentos', icone: '▦', titulo: 'Agendamentos' },
-  { id: 'perfil', icone: '♙', titulo: 'Perfil' },
+  { id: 'inicio', icone: IconeInicio, titulo: 'Início' },
+  { id: 'agendamentos', icone: IconeAgendamentos, titulo: 'Agendamentos' },
+  { id: 'perfil', icone: IconePerfil, titulo: 'Perfil' },
 ];
 
 export default function MenuInferior({
@@ -38,7 +41,9 @@ export default function MenuInferior({
               selecionado === item.id && styles.menuSelecionado,
             ]}
           >
-            <Text style={styles.iconeMenu}>{item.icone}</Text>
+            <View style={styles.iconeMenu}>
+              <item.icone width={24} height={24} />
+            </View>
           </View>
 
           <Text style={styles.textoMenu}>{item.titulo}</Text>
@@ -75,9 +80,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#7F9C08',
   },
   iconeMenu: {
-    fontSize: rem(1.625),
-    lineHeight: rem(1.875),
-    color: CORES.branco,
+    width: 48,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   textoMenu: {
     fontSize: rem(1),
