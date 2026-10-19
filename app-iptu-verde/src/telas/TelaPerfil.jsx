@@ -12,9 +12,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import AvatarPerfil from '../components/AvatarPerfil';
+import EstadoApi from '../components/EstadoApi';
 import OpcaoPerfil from '../components/OpcaoPerfil';
 import MenuInferior from '../components/telaInicial/MenuInferior';
 import { CORES } from '../components/telaInicial/tema';
+import { useApiData } from '../hooks/useApiData';
 
 const OPCOES_PERFIL = [
   { id: 'meus-dados', titulo: 'Meus dados', icone: 'usuario' },
@@ -37,9 +39,18 @@ export default function TelaPerfil({
   onAjuda,
   onAlterarSenha,
   onSair,
+  sessao,
+  token,
 }) {
   const [abaSelecionada, setAbaSelecionada] = useState('perfil');
   const [mostrarConfirmacaoSaida, setMostrarConfirmacaoSaida] = useState(false);
+  const {
+    data: usuario,
+    error: erroUsuario,
+    loading: carregandoUsuario,
+    retry: recarregarUsuario,
+  } = useApiData('/auth/me', 'usuario', token, Boolean(token));
+  const perfil = usuario?.id ? usuario : sessao?.usuario;
 
   function selecionarAba(aba) {
     setAbaSelecionada(aba);
@@ -79,7 +90,12 @@ export default function TelaPerfil({
       >
         <View style={styles.perfil}>
           <AvatarPerfil />
-          <Text style={styles.nome}>Fulano da Silva</Text>
+          <Text style={styles.nome}>{perfil?.nome ?? 'Meu perfil'}</Text>
+          <EstadoApi
+            loading={carregandoUsuario}
+            error={erroUsuario}
+            onRetry={recarregarUsuario}
+          />
         </View>
 
         <View style={styles.opcoes}>

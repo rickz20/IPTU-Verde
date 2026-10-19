@@ -2,7 +2,9 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import {
   createPayerUser,
+  findUserById,
   findUserByEmail,
+  updateUserPassword,
 } from '../repositories/userRepository.js';
 
 const ALLOWED_USER_TYPES = new Set(['pagador', 'adm']);
@@ -59,6 +61,13 @@ export async function login(email, password) {
   };
 }
 
+export function verifyAccessToken(token) {
+  return jwt.verify(token, getJwtSecret(), {
+    issuer: 'iptu-verde-api',
+    audience: 'iptu-verde-app',
+  });
+}
+
 export async function registerPayer({
   cpf,
   email,
@@ -75,4 +84,20 @@ export async function registerPayer({
     senhaHash,
     telefone: telefone.trim(),
   });
+}
+
+export async function changePassword(userId, currentPassword, newPassword) {
+  const user = await findUserById(userId);
+
+  if (
+    !user ||
+    typeof user.senhaHash !== 'string' ||
+    !(await bcrypt.compare(currentPassword, user.senhaHash))
+  ) {
+    return false;
+  }
+
+  const senhaHash = await bcrypt.hash(newPassword, 12);
+  await updateUserPassword(userId, senhaHash);
+  return true;
 }

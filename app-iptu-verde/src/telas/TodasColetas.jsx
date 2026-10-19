@@ -9,10 +9,18 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BotaoVoltar from '../components/BotaoVoltar';
 import CardTodasColetas from '../components/telaInicial/CardTodasColetas';
-import { todasColetas } from '../components/telaInicial/dados';
+import EstadoApi from '../components/EstadoApi';
 import { CORES } from '../components/telaInicial/tema';
+import { useApiData } from '../hooks/useApiData';
 
-export default function TodasColetas({ onVoltar }) {
+export default function TodasColetas({ onVoltar, token }) {
+  const {
+    data: coletas,
+    error,
+    loading,
+    retry,
+  } = useApiData('/coletas', 'coletas', token, Boolean(token));
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={CORES.branco} />
@@ -33,9 +41,18 @@ export default function TodasColetas({ onVoltar }) {
         </View>
 
         <View style={styles.lista}>
-          {todasColetas.map((coleta) => (
-            <CardTodasColetas key={coleta.id} coleta={coleta} />
-          ))}
+          <EstadoApi
+            loading={loading}
+            error={error}
+            empty={!loading && !error && coletas.length === 0}
+            onRetry={retry}
+            emptyMessage="Você ainda não tem coletas registradas."
+          />
+          {!loading && !error
+            ? coletas.map((coleta) => (
+                <CardTodasColetas key={coleta.id} coleta={coleta} />
+              ))
+            : null}
         </View>
       </ScrollView>
     </SafeAreaView>

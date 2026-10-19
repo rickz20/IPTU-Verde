@@ -8,17 +8,26 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BotaoVoltar from '../components/BotaoVoltar';
+import EstadoApi from '../components/EstadoApi';
 import { CORES } from '../components/telaInicial/tema';
+import { useApiData } from '../hooks/useApiData';
 
-const DADOS_PESSOAIS = [
-  ['Nome', 'Cecílio Alencar'],
-  ['CPF', '*********00-05'],
-  ['Estado civil', 'Casado'],
-  ['E-mail', 'emaildefulano@gmail.com'],
-  ['Telefone', '(00) 00000-0000'],
-];
+export default function TelaMeusDados({ onVoltar, token }) {
+  const {
+    data: usuario,
+    error,
+    loading,
+    retry,
+  } = useApiData('/auth/me', 'usuario', token, Boolean(token));
+  const dados = usuario?.id
+    ? [
+        ['Nome', usuario.nome],
+        ['CPF', formatarCpf(usuario.cpf)],
+        ['E-mail', usuario.email],
+        ['Telefone', usuario.telefone],
+      ]
+    : [];
 
-export default function TelaMeusDados({ onVoltar }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={CORES.branco} />
@@ -28,17 +37,33 @@ export default function TelaMeusDados({ onVoltar }) {
           <Text style={styles.titulo}>Meus dados</Text>
         </View>
         <Text style={styles.tituloSecao}>Dados pessoais</Text>
+        <EstadoApi
+          loading={loading}
+          error={error}
+          empty={!loading && !error && dados.length === 0}
+          onRetry={retry}
+          emptyMessage="Não foi possível carregar seus dados."
+        />
         <View style={styles.lista}>
-          {DADOS_PESSOAIS.map(([rotulo, valor]) => (
-            <View key={rotulo} style={styles.item}>
-              <Text style={styles.rotulo}>{rotulo}</Text>
-              <Text style={styles.valor}>{valor}</Text>
-            </View>
-          ))}
+          {!loading && !error
+            ? dados.map(([rotulo, valor]) => (
+                <View key={rotulo} style={styles.item}>
+                  <Text style={styles.rotulo}>{rotulo}</Text>
+                  <Text style={styles.valor}>{valor || 'Não informado'}</Text>
+                </View>
+              ))
+            : null}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
+}
+
+function formatarCpf(cpf) {
+  if (typeof cpf !== 'string') return '';
+  const digits = cpf.replace(/\D/g, '');
+  if (digits.length !== 11) return cpf;
+  return `***.***.***-${digits.slice(-2)}`;
 }
 
 const styles = StyleSheet.create({

@@ -1,8 +1,8 @@
 # Backend do IPTU Verde
 
-API Express com Firebase Admin, seguindo a organização do backend do Nutra.
-Por enquanto, a API cobre login e cadastro de pagadores na coleção `usuarios`
-do Firestore. O cadastro público sempre cria `tipo: "pagador"`; contas com
+API Express com Firebase Admin. A API cobre autenticação, perfil, alteração de
+senha, pontos de coleta, agendamentos, histórico de coletas e notificações no
+Firestore. O cadastro público sempre cria `tipo: "pagador"`; contas com
 `tipo: "adm"` devem ser provisionadas manualmente por uma pessoa autorizada.
 O login aceita os dois tipos; até a tela administrativa ser implementada, o app
 confirma o login `adm` sem abrir a área de pagadores.
@@ -22,7 +22,10 @@ confirma o login `adm` sem abrir a área de pagadores.
    ```
 
    A coleção pode ser alterada com `FIRESTORE_USERS_COLLECTION`; o padrão é
-   `usuarios`.
+   `usuarios`. As demais coleções podem ser configuradas pelas variáveis
+   `FIRESTORE_POINTS_COLLECTION`, `FIRESTORE_BOOKINGS_COLLECTION`,
+   `FIRESTORE_COLLECTIONS_COLLECTION`, `FIRESTORE_NOTIFICATIONS_COLLECTION`
+   e `FIRESTORE_PROPERTIES_COLLECTION`.
 
 ## Senhas existentes no Firestore
 
@@ -84,3 +87,40 @@ Em caso de sucesso, a API retorna um JWT de uma hora e os dados de perfil sem
 incluir a senha ou o hash. O campo `tipo` deve ser `pagador` ou `adm`. O valor
 `adm` fica reservado aos administradores; o cadastro público não deve permitir
 que alguém escolha esse tipo.
+
+## Dados consumidos pelo aplicativo
+
+Os endpoints abaixo usam `Authorization: Bearer <token>` quando indicados.
+O backend nunca aceita um `usuarioId` fornecido pelo aplicativo para consultas
+de dados pessoais; identifica a conta a partir do JWT.
+
+| Endpoint | Acesso | Uso |
+| --- | --- | --- |
+| `GET /auth/me` | autenticado | Dados da conta atual |
+| `PATCH /auth/me` | autenticado | Atualizar nome e/ou telefone |
+| `PATCH /auth/password` | autenticado | Alterar senha, validando a senha atual |
+| `GET /pontos-coleta` | público | Lista de pontos ativos/cadastrados |
+| `GET /notificacoes` | público | Avisos publicados |
+| `GET /agendamentos` | autenticado | Agendamentos da conta atual |
+| `POST /agendamentos` | autenticado | Criar agendamento |
+| `GET /coletas` | autenticado | Histórico da conta atual |
+| `GET /imoveis` | autenticado | Imóveis vinculados à conta atual |
+
+Cadastre os documentos do Firestore para disponibilizar os dados. A tela não
+usa mais os arrays de demonstração:
+
+- `pontosColeta/{id}`: `nome`, `endereco`, `cidade`, `referencia` e `horario`.
+- `notificacoes/{id}`: `titulo`, `descricao`, `data` e `horario`.
+- `coletas/{id}`: `usuarioId` (ID do documento do usuário), `quantidade`,
+  `material`, `entregador`, `responsavel`, `endereco`, `data` e `horario`.
+- `agendamentos/{id}` é criado pelo `POST /agendamentos` e recebe o `usuarioId`
+  do token, além de ponto, data, horário, modalidade, materiais e status.
+- `imoveis/{id}`: `usuarioId` (ID do documento do usuário), `endereco`,
+  `bairro`, `cidade`, `inscricaoImobiliaria` e `tipo`.
+
+A modalidade aceita `ponto` ou `domicilio`; modalidade domiciliar exige
+endereço, e materiais são enviados como uma lista de nomes. A data de
+agendamento usa `AAAA-MM-DD` e deve ser hoje ou futura.
+Para locais, avisos e coletas aparecerem no app, uma pessoa autorizada deve
+cadastrar seus documentos no Firestore. O backend ainda não tem painel nem
+endpoints administrativos para gerenciar pontos, avisos, coletas ou imóveis.

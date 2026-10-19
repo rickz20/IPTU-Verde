@@ -416,7 +416,7 @@ export default function Login() {
 
   if (showHome) {
     if (session?.usuario?.tipo === 'pagador') {
-      return <TelaInicial onSair={handleLogout} />;
+      return <TelaInicial onSair={handleLogout} sessao={session} />;
     }
   }
 

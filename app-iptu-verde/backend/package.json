@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
-    "check": "node --check src/server.js && node --check src/app.js && node --check src/routes/authRoutes.js && node --check src/services/authService.js && node --check src/repositories/userRepository.js && node --check src/config/env.js && node --check src/config/firebaseAdmin.js && node --check scripts/migratePasswords.js",
+    "check": "node --check src/server.js && node --check src/app.js && node --check src/routes/authRoutes.js && node --check src/services/authService.js && node --check src/repositories/userRepository.js && node --check src/repositories/appRepository.js && node --check src/middleware/requireAuth.js && node --check src/config/env.js && node --check src/config/firebaseAdmin.js && node --check scripts/migratePasswords.js",
     "migrate:passwords": "node scripts/migratePasswords.js"
   },
   "dependencies": {

@@ -53,7 +53,7 @@ export default function CardMeuAgendamento({ agendamento }) {
 
 const styles = StyleSheet.create({
   cartao: {
-    minHeight: 128,
+    minHeight: 148,
     padding: 14,
     borderRadius: 17,
     backgroundColor: CORES.cinza,
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   detalhes: {
     flex: 1,
     justifyContent: 'center',
-    gap: 14,
+    gap: 12,
   },
   linha: {
     flexDirection: 'row',
@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
   },
   rotulo: {
     color: '#5E5B56',
-    fontSize: rem(1),
-    lineHeight: rem(1.25),
+    fontSize: rem(0.875),
+    lineHeight: rem(1.125),
     fontFamily: 'Inter_400Regular',
   },
   titulo: {
@@ -98,8 +98,8 @@ const styles = StyleSheet.create({
   },
   valorEmNegrito: {
     color: '#111111',
-    fontSize: rem(1),
-    lineHeight: rem(1.25),
+    fontSize: rem(0.875),
+    lineHeight: rem(1.125),
     fontFamily: 'Inter_700Bold',
   },
 });

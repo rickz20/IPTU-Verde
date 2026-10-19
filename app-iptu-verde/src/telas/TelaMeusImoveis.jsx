@@ -9,17 +9,18 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import BotaoVoltar from '../components/BotaoVoltar';
+import EstadoApi from '../components/EstadoApi';
 import { CORES } from '../components/telaInicial/tema';
+import { useApiData } from '../hooks/useApiData';
 
-const DADOS_IMOVEL = [
-  ['Endereço', 'Rua Exemplo, 123'],
-  ['Bairro', 'Centro'],
-  ['Cidade', 'Quixadá - CE'],
-  ['Inscrição imobiliária', '000000000'],
-  ['Tipo de imóvel', 'Residencial'],
-];
+export default function TelaMeusImoveis({ onVoltar, token }) {
+  const {
+    data: imoveis,
+    error,
+    loading,
+    retry,
+  } = useApiData('/imoveis', 'imoveis', token, Boolean(token));
 
-export default function TelaMeusImoveis({ onVoltar }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={CORES.branco} />
@@ -29,28 +30,49 @@ export default function TelaMeusImoveis({ onVoltar }) {
           <Text style={styles.titulo}>Meus imóveis</Text>
         </View>
 
-        <View style={styles.cartao}>
-          <View style={styles.iconeCasa}>
-            <Svg width={28} height={28} viewBox="0 0 24 24">
-              <Path
-                d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z"
-                fill="none"
-                stroke={CORES.verdeEscuro}
-                strokeWidth={1.8}
-                strokeLinejoin="round"
-              />
-            </Svg>
-          </View>
-          <Text style={styles.tituloCartao}>Imóvel cadastrado</Text>
-          <View style={styles.lista}>
-            {DADOS_IMOVEL.map(([rotulo, valor]) => (
-              <View key={rotulo} style={styles.item}>
-                <Text style={styles.rotulo}>{rotulo}</Text>
-                <Text style={styles.valor}>{valor}</Text>
+        <EstadoApi
+          loading={loading}
+          error={error}
+          empty={!loading && !error && imoveis.length === 0}
+          onRetry={retry}
+          emptyMessage="Não há imóveis vinculados a esta conta."
+        />
+        {!loading && !error
+          ? imoveis.map((imovel) => (
+              <View key={imovel.id} style={styles.cartao}>
+                <View style={styles.iconeCasa}>
+                  <Svg width={28} height={28} viewBox="0 0 24 24">
+                    <Path
+                      d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z"
+                      fill="none"
+                      stroke={CORES.verdeEscuro}
+                      strokeWidth={1.8}
+                      strokeLinejoin="round"
+                    />
+                  </Svg>
+                </View>
+                <Text style={styles.tituloCartao}>
+                  {imovel.tipo ?? 'Imóvel cadastrado'}
+                </Text>
+                <View style={styles.lista}>
+                  {[
+                    ['Endereço', imovel.endereco],
+                    ['Bairro', imovel.bairro],
+                    ['Cidade', imovel.cidade],
+                    ['Inscrição imobiliária', imovel.inscricaoImobiliaria],
+                    ['Tipo de imóvel', imovel.tipo],
+                  ]
+                    .filter(([, valor]) => Boolean(valor))
+                    .map(([rotulo, valor]) => (
+                      <View key={rotulo} style={styles.item}>
+                        <Text style={styles.rotulo}>{rotulo}</Text>
+                        <Text style={styles.valor}>{valor}</Text>
+                      </View>
+                    ))}
+                </View>
               </View>
-            ))}
-          </View>
-        </View>
+            ))
+          : null}
       </ScrollView>
     </SafeAreaView>
   );

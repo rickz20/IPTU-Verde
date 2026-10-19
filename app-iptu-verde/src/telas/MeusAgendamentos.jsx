@@ -9,12 +9,19 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CardMeuAgendamento from '../components/agendamentos/CardMeuAgendamento';
-import { meusAgendamentos } from '../components/agendamentos/dadosMeusAgendamentos';
+import EstadoApi from '../components/EstadoApi';
 import MenuInferior from '../components/telaInicial/MenuInferior';
 import { CORES } from '../components/telaInicial/tema';
+import { useApiData } from '../hooks/useApiData';
 
-export default function MeusAgendamentos({ onSelecionarAba }) {
+export default function MeusAgendamentos({ onSelecionarAba, token }) {
   const [abaSelecionada, setAbaSelecionada] = useState('agendamentos');
+  const {
+    data: agendamentos,
+    error,
+    loading,
+    retry,
+  } = useApiData('/agendamentos', 'agendamentos', token, Boolean(token));
 
   function selecionarAba(aba) {
     setAbaSelecionada(aba);
@@ -38,12 +45,31 @@ export default function MeusAgendamentos({ onSelecionarAba }) {
         </View>
 
         <View style={styles.lista}>
-          {meusAgendamentos.map((agendamento) => (
-            <CardMeuAgendamento
-              key={agendamento.id}
-              agendamento={agendamento}
-            />
-          ))}
+          <EstadoApi
+            loading={loading}
+            error={error}
+            empty={!loading && !error && agendamentos.length === 0}
+            onRetry={retry}
+            emptyMessage="Você ainda não tem agendamentos."
+          />
+          {!loading && !error
+            ? agendamentos.map((agendamento) => (
+                <CardMeuAgendamento
+                  key={agendamento.id}
+                  agendamento={{
+                    ...agendamento,
+                    data: formatarData(agendamento.data),
+                    modalidade:
+                      agendamento.modalidade === 'domicilio'
+                        ? 'Coleta em domicílio'
+                        : 'Entrega no ponto de coleta',
+                    materiais: Array.isArray(agendamento.materiais)
+                      ? agendamento.materiais.join(', ')
+                      : agendamento.materiais,
+                  }}
+                />
+              ))
+            : null}
         </View>
       </ScrollView>
 
@@ -53,6 +79,15 @@ export default function MeusAgendamentos({ onSelecionarAba }) {
       />
     </SafeAreaView>
   );
+}
+
+function formatarData(data) {
+  if (typeof data !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(data)) {
+    return data ?? '';
+  }
+
+  const [ano, mes, dia] = data.split('-');
+  return `${dia}/${mes}/${ano}`;
 }
 
 const styles = StyleSheet.create({

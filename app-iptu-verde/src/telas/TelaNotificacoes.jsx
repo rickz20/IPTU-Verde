@@ -12,19 +12,22 @@ import {
 
 // Importando o componente de área segura
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 // Importando os componentes reutilizáveis
 import BotaoVoltar from '../components/BotaoVoltar';
 import CardNotificacao from '../components/notificacoes/CardNotificacao';
-
-// Importando os dados provisórios das notificações
-import { notificacoes } from '../components/notificacoes/dadosNotificacoes';
-
+import EstadoApi from '../components/EstadoApi';
 // Importando as cores padronizadas do projeto
 import { CORES } from '../components/telaInicial/tema';
+import { useApiData } from '../hooks/useApiData';
 
 // Criando a tela principal de notificações
 export default function TelaNotificacoes({ onVoltar }) {
+  const {
+    data: notificacoes,
+    error,
+    loading,
+    retry,
+  } = useApiData('/notificacoes', 'notificacoes');
 
   // Renderizando a estrutura da tela
   return (
@@ -65,18 +68,26 @@ export default function TelaNotificacoes({ onVoltar }) {
 
           {/* Organizando a lista de notificações */}
           <View style={styles.lista}>
+            <EstadoApi
+              loading={loading}
+              error={error}
+              empty={!loading && !error && notificacoes.length === 0}
+              onRetry={retry}
+              emptyMessage="Não há avisos no momento."
+            />
 
             {/* Renderizando os cards automaticamente */}
-            {notificacoes.map((notificacao) => (
-              <CardNotificacao
-                key={notificacao.id}
-                titulo={notificacao.titulo}
-                descricao={notificacao.descricao}
-                data={notificacao.data}
-                horario={notificacao.horario}
-              />
-            ))}
-
+            {!loading && !error
+              ? notificacoes.map((notificacao) => (
+                  <CardNotificacao
+                    key={notificacao.id}
+                    titulo={notificacao.titulo}
+                    descricao={notificacao.descricao}
+                    data={notificacao.data}
+                    horario={notificacao.horario}
+                  />
+                ))
+              : null}
           </View>
 
         </View>

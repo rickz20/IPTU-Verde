@@ -16,22 +16,43 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import BotaoVoltar from '../components/BotaoVoltar';
 import InputCadastro from '../components/InputCadastro';
 import { CORES } from '../components/telaInicial/tema';
+import { apiRequest } from '../services/api';
 
-export default function TelaAlterarSenha({ onVoltar }) {
+export default function TelaAlterarSenha({ onVoltar, token }) {
+  const [senhaAtual, setSenhaAtual] = useState('');
   const [novaSenha, setNovaSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [tentouAlterar, setTentouAlterar] = useState(false);
   const [mostrarSaida, setMostrarSaida] = useState(false);
   const [alterada, setAlterada] = useState(false);
+  const [erroServidor, setErroServidor] = useState('');
+  const [salvando, setSalvando] = useState(false);
 
   const senhaValida =
     novaSenha.length >= 8 && /[a-zA-Z]/.test(novaSenha) && /\d/.test(novaSenha);
   const senhasDiferentes = tentouAlterar && novaSenha !== confirmarSenha;
 
-  function alterarSenha() {
+  async function alterarSenha() {
     setTentouAlterar(true);
-    if (!senhaValida || novaSenha !== confirmarSenha) return;
-    setAlterada(true);
+    setErroServidor('');
+    if (!senhaAtual || !senhaValida || novaSenha !== confirmarSenha) return;
+
+    setSalvando(true);
+    try {
+      await apiRequest('/auth/password', {
+        method: 'PATCH',
+        token,
+        body: JSON.stringify({ senhaAtual, novaSenha }),
+      });
+      setAlterada(true);
+      setSenhaAtual('');
+      setNovaSenha('');
+      setConfirmarSenha('');
+    } catch (error) {
+      setErroServidor(error.message);
+    } finally {
+      setSalvando(false);
+    }
   }
 
   function sairSemAlterar() {
@@ -63,8 +84,18 @@ export default function TelaAlterarSenha({ onVoltar }) {
           <View style={styles.form}>
             <Text style={styles.titulo}>Insira a nova senha</Text>
             <Text style={styles.descricao}>
-              Insira uma senha segura para proteger sua conta.
+              Confirme sua senha atual e escolha uma nova senha para proteger a
+              conta.
             </Text>
+            <InputCadastro
+              placeholder="Senha atual"
+              value={senhaAtual}
+              onChangeText={setSenhaAtual}
+              secureTextEntry
+              autoCapitalize="none"
+              hasError={tentouAlterar && !senhaAtual}
+              containerStyle={styles.campo}
+            />
             <InputCadastro
               placeholder="Nova senha"
               value={novaSenha}
@@ -97,12 +128,18 @@ export default function TelaAlterarSenha({ onVoltar }) {
                 A senha deve ter pelo menos 8 caracteres e conter letras e números.
               </Text>
             )}
+            {erroServidor ? (
+              <Text style={styles.erro}>{erroServidor}</Text>
+            ) : null}
             <Pressable
               style={styles.botao}
               onPress={alterarSenha}
+              disabled={salvando}
               accessibilityRole="button"
             >
-              <Text style={styles.textoBotao}>Trocar senha</Text>
+              <Text style={styles.textoBotao}>
+                {salvando ? 'Salvando...' : 'Trocar senha'}
+              </Text>
             </Pressable>
           </View>
         </ScrollView>
@@ -142,7 +179,7 @@ export default function TelaAlterarSenha({ onVoltar }) {
             </Text>
             <Text style={styles.textoModal}>
               {alterada
-                ? 'Sua nova senha foi confirmada.'
+                ? 'Sua senha foi alterada com sucesso.'
                 : 'Você não terminou de alterar a sua senha.'}
             </Text>
             <View style={styles.acoesModal}>

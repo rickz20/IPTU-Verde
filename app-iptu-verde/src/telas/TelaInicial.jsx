@@ -25,15 +25,24 @@ import TodasColetas from './TodasColetas';
 import TelaMeusDados from './TelaMeusDados';
 import TelaMeusImoveis from './TelaMeusImoveis';
 import TelaAlterarSenha from './TelaAlterarSenha';
-import { coletas } from '../components/telaInicial/dados';
+import TelaComoReciclar from './TelaComoReciclar';
+import TelaSegurancaPrivacidade from './TelaSegurancaPrivacidade';
+import EstadoApi from '../components/EstadoApi';
+import { useApiData } from '../hooks/useApiData';
 import { CORES } from '../components/telaInicial/tema';
 
-export default function TelaInicial({ onSair }) {
+export default function TelaInicial({ onSair, sessao }) {
   // Controlando a aba selecionada no menu inferior
   const [abaSelecionada, setAbaSelecionada] = useState('inicio');
 
   // Controlando a tela exibida atualmente
   const [telaAtual, setTelaAtual] = useState('inicio');
+  const {
+    data: coletas,
+    error: erroColetas,
+    loading: carregandoColetas,
+    retry: recarregarColetas,
+  } = useApiData('/coletas', 'coletas', sessao?.token, Boolean(sessao?.token));
 
   function selecionarAba(aba) {
     setAbaSelecionada(aba);
@@ -55,28 +64,55 @@ export default function TelaInicial({ onSair }) {
         onSeguranca={() => setTelaAtual('seguranca-privacidade')}
         onAjuda={() => setTelaAtual('ajuda-suporte')}
         onAlterarSenha={() => setTelaAtual('alterar-senha')}
+        sessao={sessao}
+        token={sessao?.token}
         onSair={onSair}
       />
     );
   }
 
   if (telaAtual === 'meus-dados') {
-    return <TelaMeusDados onVoltar={() => setTelaAtual('perfil')} />;
+    return (
+      <TelaMeusDados
+        token={sessao?.token}
+        onVoltar={() => setTelaAtual('perfil')}
+      />
+    );
   }
 
   if (telaAtual === 'meus-imoveis') {
-    return <TelaMeusImoveis onVoltar={() => setTelaAtual('perfil')} />;
+    return (
+      <TelaMeusImoveis
+        token={sessao?.token}
+        onVoltar={() => setTelaAtual('perfil')}
+      />
+    );
   }
 
   if (telaAtual === 'alterar-senha') {
-    return <TelaAlterarSenha onVoltar={() => setTelaAtual('perfil')} />;
+    return (
+      <TelaAlterarSenha
+        token={sessao?.token}
+        onVoltar={() => setTelaAtual('perfil')}
+      />
+    );
+  }
+
+  if (telaAtual === 'alterar-senha-seguranca') {
+    return (
+      <TelaAlterarSenha
+        token={sessao?.token}
+        onVoltar={() => setTelaAtual('seguranca-privacidade')}
+      />
+    );
   }
 
   if (telaAtual === 'seguranca-privacidade') {
     return (
-      <TelaEmBranco
-        titulo="Segurança e privacidade"
+      <TelaSegurancaPrivacidade
         onVoltar={() => setTelaAtual('perfil')}
+        onAlterarSenha={() => setTelaAtual('alterar-senha-seguranca')}
+        email={sessao?.usuario?.email}
       />
     );
   }
@@ -91,21 +127,42 @@ export default function TelaInicial({ onSair }) {
   }
 
   if (telaAtual === 'meus-agendamentos') {
-    return <MeusAgendamentos onSelecionarAba={selecionarAba} />;
+    return (
+      <MeusAgendamentos
+        token={sessao?.token}
+        onSelecionarAba={selecionarAba}
+      />
+    );
   }
 
   if (telaAtual === 'todas-coletas') {
-    return <TodasColetas onVoltar={() => setTelaAtual('inicio')} />;
+    return (
+      <TodasColetas
+        token={sessao?.token}
+        onVoltar={() => setTelaAtual('inicio')}
+      />
+    );
   }
 
   if (telaAtual === 'tela-agendamento') {
-    return <PontosDeColeta onVoltar={() => setTelaAtual('inicio')} />;
+    return (
+      <PontosDeColeta
+        token={sessao?.token}
+        onVoltar={() => setTelaAtual('inicio')}
+      />
+    );
   }
 
   if (telaAtual === 'notificacoes') {
     return (
-      <TelaNotificacoes onVoltar={() => setTelaAtual('inicio')} />
+      <TelaNotificacoes
+        onVoltar={() => setTelaAtual('inicio')}
+      />
     );
+  }
+
+  if (telaAtual === 'como-reciclar') {
+    return <TelaComoReciclar onVoltar={() => setTelaAtual('inicio')} />;
   }
 
   return (
@@ -141,9 +198,29 @@ export default function TelaInicial({ onSair }) {
           </View>
 
           <View style={styles.listaColetas}>
-            {coletas.map((item) => (
-              <ItemColeta key={item.id} item={item} onPress={() => {}} />
-            ))}
+            <EstadoApi
+              loading={carregandoColetas}
+              error={erroColetas}
+              empty={!carregandoColetas && !erroColetas && coletas.length === 0}
+              onRetry={recarregarColetas}
+              emptyMessage="Ainda não há coletas registradas."
+            />
+            {!carregandoColetas && !erroColetas
+              ? coletas.slice(0, 3).map((coleta) => (
+                  <ItemColeta
+                    key={coleta.id}
+                    item={{
+                      nome:
+                        coleta.responsavel ??
+                        coleta.entregador ??
+                        coleta.material ??
+                        'Coleta realizada',
+                      data: formatarDataColeta(coleta.data),
+                      horario: coleta.horario ?? '',
+                    }}
+                  />
+                ))
+              : null}
           </View>
         </View>
 
@@ -161,7 +238,7 @@ export default function TelaInicial({ onSair }) {
             descricao="Como separar os seus resíduos e quais deles podem ser reciclados"
             tipo="reciclagem"
             cor={CORES.amarelo}
-            onPress={() => {}}
+            onPress={() => setTelaAtual('como-reciclar')}
           />
         </View>
       </ScrollView>
@@ -169,6 +246,17 @@ export default function TelaInicial({ onSair }) {
       <MenuInferior selecionado={abaSelecionada} onSelecionar={selecionarAba} />
     </SafeAreaView>
   );
+}
+
+function formatarDataColeta(data) {
+  if (typeof data !== 'string') {
+    return '';
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) {
+    return data;
+  }
+  const [, mes, dia] = data.split('-');
+  return `${dia}/${mes}`;
 }
 
 const styles = StyleSheet.create({

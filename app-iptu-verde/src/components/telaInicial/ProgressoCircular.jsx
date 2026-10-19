@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Alexandria_700Bold',
   },
   textoDesconto: {
-    fontSize: rem(0.75),
-    lineHeight: rem(0.875),
+    fontSize: rem(0.875),
+    lineHeight: rem(1),
     textAlign: 'center',
     color: CORES.texto,
     fontFamily: 'Inter_400Regular',

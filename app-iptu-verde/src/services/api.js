@@ -7,14 +7,16 @@ const API_BASE_URL = (
 ).replace(/\/+$/, '');
 
 export async function apiRequest(path, options = {}) {
+  const { token, headers: requestHeaders, ...fetchOptions } = options;
   let response;
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
-      ...options,
+      ...fetchOptions,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        ...options.headers,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...requestHeaders,
       },
     });
   } catch (error) {

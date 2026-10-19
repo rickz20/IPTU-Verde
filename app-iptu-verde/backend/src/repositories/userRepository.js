@@ -29,6 +29,23 @@ export async function findUserByEmail(email) {
   };
 }
 
+export async function findUserById(id) {
+  const document = await usersCollection.doc(id).get();
+  if (!document.exists) {
+    return null;
+  }
+
+  return { ...document.data(), id: document.id };
+}
+
+export async function updateUserProfile(id, profile) {
+  await usersCollection.doc(id).update(profile);
+}
+
+export async function updateUserPassword(id, senhaHash) {
+  await usersCollection.doc(id).update({ senhaHash });
+}
+
 export async function createPayerUser({
   cpf,
   email,
