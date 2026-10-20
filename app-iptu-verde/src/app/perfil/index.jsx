@@ -24,17 +24,9 @@ export default function RotaPerfil() {
   const abrirImoveis = () =>
     router.push('/perfil/meus-imoveis');
 
-  // Definindo a navegação para Segurança e privacidade
-  const abrirSeguranca = () =>
-    router.push('/perfil/seguranca-privacidade');
-
   // Definindo a navegação para Ajuda e suporte
   const abrirAjuda = () =>
     router.push('/perfil/ajuda-suporte');
-
-  // Definindo a navegação para Alterar senha
-  const abrirSenha = () =>
-    router.push('/perfil/alterar-senha');
 
   // Renderizando o Perfil com as ações conectadas
   return (
@@ -42,9 +34,8 @@ export default function RotaPerfil() {
       onVoltar={voltar}
       onMeusDados={abrirDados}
       onMeusImoveis={abrirImoveis}
-      onSeguranca={abrirSeguranca}
+      onMeusAgendamentos={() => router.replace('/')}
       onAjuda={abrirAjuda}
-      onAlterarSenha={abrirSenha}
       onSair={() => router.replace('/')}
     />
   );

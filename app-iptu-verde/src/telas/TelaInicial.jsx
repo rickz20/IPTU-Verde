@@ -64,9 +64,8 @@ export default function TelaInicial({ onSair, sessao }) {
         onSelecionarAba={selecionarAba}
         onMeusDados={() => setTelaAtual('meus-dados')}
         onMeusImoveis={() => setTelaAtual('meus-imoveis')}
-        onSeguranca={() => setTelaAtual('seguranca-privacidade')}
+        onMeusAgendamentos={() => selecionarAba('agendamentos')}
         onAjuda={() => setTelaAtual('ajuda-suporte')}
-        onAlterarSenha={() => setTelaAtual('alterar-senha')}
         sessao={sessao}
         token={sessao?.token}
         onSair={onSair}
@@ -152,6 +151,7 @@ export default function TelaInicial({ onSair, sessao }) {
     return (
       <PontosDeColeta
         token={sessao?.token}
+        onSelecionarAba={selecionarAba}
         onVoltar={() => setTelaAtual('inicio')}
       />
     );

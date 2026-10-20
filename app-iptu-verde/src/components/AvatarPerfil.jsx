@@ -55,24 +55,24 @@ export default function AvatarPerfil({ onEditar = () => {} }) {
 
 const styles = StyleSheet.create({
   container: {
-    width: 140,
-    height: 140,
+    width: 112,
+    height: 112,
     alignSelf: 'center',
     position: 'relative',
   },
   avatar: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+    width: 112,
+    height: 112,
+    borderRadius: 56,
     overflow: 'hidden',
   },
   botaoEditar: {
     position: 'absolute',
     right: 0,
     bottom: 0,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     borderWidth: 1,
     borderColor: '#E2E2E2',
     backgroundColor: CORES.branco,

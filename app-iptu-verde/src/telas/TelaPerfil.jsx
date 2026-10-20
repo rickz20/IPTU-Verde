@@ -21,13 +21,11 @@ import { useApiData } from '../hooks/useApiData';
 const OPCOES_PERFIL = [
   { id: 'meus-dados', titulo: 'Meus dados', icone: 'usuario' },
   { id: 'meus-imoveis', titulo: 'Meus imóveis', icone: 'imoveis' },
-  {
-    id: 'seguranca-privacidade',
-    titulo: 'Segurança e privacidade',
-    icone: 'seguranca',
-  },
+  { id: 'meus-agendamentos', titulo: 'Meus agendamentos', icone: 'sino' },
+];
+
+const OPCOES_AJUDA = [
   { id: 'ajuda-suporte', titulo: 'Ajuda e suporte', icone: 'ajuda' },
-  { id: 'alterar-senha', titulo: 'Alterar senha', icone: 'senha', destaque: true },
   { id: 'sair', titulo: 'Sair', icone: 'sair', destaque: true },
 ];
 
@@ -35,9 +33,8 @@ export default function TelaPerfil({
   onSelecionarAba,
   onMeusDados,
   onMeusImoveis,
-  onSeguranca,
+  onMeusAgendamentos,
   onAjuda,
-  onAlterarSenha,
   onSair,
   sessao,
   token,
@@ -61,9 +58,8 @@ export default function TelaPerfil({
     const acoes = {
       'meus-dados': onMeusDados,
       'meus-imoveis': onMeusImoveis,
-      'seguranca-privacidade': onSeguranca,
+      'meus-agendamentos': onMeusAgendamentos,
       'ajuda-suporte': onAjuda,
-      'alterar-senha': onAlterarSenha,
     };
 
     if (id === 'sair') {
@@ -102,15 +98,28 @@ export default function TelaPerfil({
         </View>
 
         <View style={styles.opcoes}>
-          {OPCOES_PERFIL.map((opcao) => (
-            <OpcaoPerfil
-              key={opcao.id}
-              titulo={opcao.titulo}
-              icone={opcao.icone}
-              destaque={opcao.destaque}
-              onPress={() => selecionarOpcao(opcao.id)}
-            />
-          ))}
+          <View style={styles.grupoOpcoes}>
+            {OPCOES_PERFIL.map((opcao) => (
+              <OpcaoPerfil
+                key={opcao.id}
+                titulo={opcao.titulo}
+                icone={opcao.icone}
+                destaque={opcao.destaque}
+                onPress={() => selecionarOpcao(opcao.id)}
+              />
+            ))}
+          </View>
+          <View style={styles.grupoOpcoes}>
+            {OPCOES_AJUDA.map((opcao) => (
+              <OpcaoPerfil
+                key={opcao.id}
+                titulo={opcao.titulo}
+                icone={opcao.icone}
+                destaque={opcao.destaque}
+                onPress={() => selecionarOpcao(opcao.id)}
+              />
+            ))}
+          </View>
         </View>
       </ScrollView>
 
@@ -187,8 +196,8 @@ const styles = StyleSheet.create({
   },
   perfil: {
     alignItems: 'center',
-    marginTop: 96,
-    marginBottom: 64,
+    marginTop: 48,
+    marginBottom: 72,
   },
   nome: {
     marginTop: 16,
@@ -197,6 +206,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Alexandria_700Bold',
   },
   opcoes: {
+    gap: 28,
+  },
+  grupoOpcoes: {
     gap: 8,
   },
   modalFundo: {

@@ -30,9 +30,9 @@ export default function OpcaoPerfil({
 
 const styles = StyleSheet.create({
   opcao: {
-    minHeight: 58,
+    minHeight: 48,
     paddingHorizontal: 18,
-    borderRadius: 17,
+    borderRadius: 14,
     backgroundColor: CORES.cinza,
     flexDirection: 'row',
     alignItems: 'center',
