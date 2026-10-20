@@ -161,8 +161,6 @@ export default function PontosDeColeta({
       !data ||
       !horario ||
       horariosOcupados.includes(horario) ||
-      carregandoHorarios ||
-      Boolean(erroDisponibilidade) ||
       materiais.length === 0 ||
       !telefoneValido ||
       (modalidade === 'domicilio' &&
@@ -171,9 +169,7 @@ export default function PontosDeColeta({
       setErroAgendamento(
         horariosOcupados.includes(horario)
           ? 'Este horário acabou de ser reservado. Escolha outro horário ou dia.'
-          : erroDisponibilidade
-            ? 'Não foi possível verificar os horários disponíveis. Tente novamente.'
-            : 'Informe telefone, data, horário e ao menos um material. Para coleta em domicílio, preencha rua, número e bairro.',
+          : 'Informe telefone, data, horário e ao menos um material. Para coleta em domicílio, preencha rua, número e bairro.',
       );
       return;
     }
@@ -273,16 +269,17 @@ export default function PontosDeColeta({
         onRequestClose={fecharFormulario}
       >
         <View style={styles.modalConteudo}>
-          <SafeAreaView
-            edges={[]}
-            style={[
-              styles.telaFormulario,
-              {
-                paddingTop: insets.top,
-                paddingBottom: insets.bottom,
-              },
-            ]}
-          >
+          {etapaAgendamento === 'formulario' ? (
+            <SafeAreaView
+              edges={[]}
+              style={[
+                styles.telaFormulario,
+                {
+                  paddingTop: insets.top,
+                  paddingBottom: insets.bottom,
+                },
+              ]}
+            >
             <ScrollView
               style={styles.scrollFormulario}
               contentContainerStyle={styles.conteudoFormulario}
@@ -639,10 +636,17 @@ export default function PontosDeColeta({
                 <Text style={styles.textoBotaoAgendar}>Agendar Coleta</Text>
               </Pressable>
             </ScrollView>
-          </SafeAreaView>
-          {etapaAgendamento !== 'formulario' ? (
-            <View style={styles.fundoModal}>
-              <View style={styles.cartaoConfirmacao}>
+            </SafeAreaView>
+          ) : (
+            <SafeAreaView
+              style={styles.telaConfirmacao}
+              edges={['top', 'right', 'bottom', 'left']}
+            >
+              <ScrollView
+                contentContainerStyle={styles.conteudoConfirmacao}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+              >
                 <IconeCalendario width={48} height={48} />
                 <Text style={styles.tituloConfirmacao}>
                   {etapaAgendamento === 'sucesso'
@@ -734,9 +738,9 @@ export default function PontosDeColeta({
                     </Pressable>
                   )}
                 </View>
-              </View>
-            </View>
-          ) : null}
+              </ScrollView>
+            </SafeAreaView>
+          )}
         </View>
       </Modal>
     </SafeAreaView>
@@ -779,13 +783,6 @@ const styles = StyleSheet.create({
   listaPontos: {
     gap: 10,
   },
-  fundoModal: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 2,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-  },
   modalConteudo: {
     flex: 1,
     backgroundColor: CORES.branco,
@@ -793,6 +790,17 @@ const styles = StyleSheet.create({
   telaFormulario: {
     flex: 1,
     backgroundColor: CORES.branco,
+  },
+  telaConfirmacao: {
+    flex: 1,
+    backgroundColor: CORES.branco,
+  },
+  conteudoConfirmacao: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 32,
   },
   scrollFormulario: {
     flex: 1,
@@ -1038,16 +1046,6 @@ const styles = StyleSheet.create({
     lineHeight: rem(1.375),
     fontFamily: 'Inter_700Bold',
   },
-  cartaoConfirmacao: {
-    width: '100%',
-    maxWidth: 420,
-    maxHeight: '90%',
-    alignSelf: 'center',
-    alignItems: 'center',
-    padding: 22,
-    borderRadius: 18,
-    backgroundColor: CORES.branco,
-  },
   tituloConfirmacao: {
     marginTop: 14,
     color: CORES.texto,
@@ -1066,6 +1064,7 @@ const styles = StyleSheet.create({
   },
   resumoAgendamento: {
     width: '100%',
+    maxWidth: 420,
     gap: 9,
     marginTop: 18,
   },
@@ -1106,6 +1105,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
   },
   acoesModal: {
+    width: '100%',
+    maxWidth: 420,
     marginTop: 10,
     flexDirection: 'row',
     gap: 10,
