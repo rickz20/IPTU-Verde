@@ -24,8 +24,9 @@ confirma o login `adm` sem abrir a área de pagadores.
    A coleção pode ser alterada com `FIRESTORE_USERS_COLLECTION`; o padrão é
    `usuarios`. As demais coleções podem ser configuradas pelas variáveis
    `FIRESTORE_POINTS_COLLECTION`, `FIRESTORE_BOOKINGS_COLLECTION`,
-   `FIRESTORE_COLLECTIONS_COLLECTION`, `FIRESTORE_NOTIFICATIONS_COLLECTION`
-   e `FIRESTORE_PROPERTIES_COLLECTION`.
+   `FIRESTORE_COLLECTIONS_COLLECTION`, `FIRESTORE_NOTIFICATIONS_COLLECTION`,
+   `FIRESTORE_PROPERTIES_COLLECTION` e
+   `FIRESTORE_BOOKING_SLOTS_COLLECTION`.
 
 ## Senhas existentes no Firestore
 
@@ -106,6 +107,7 @@ de dados pessoais; identifica a conta a partir do JWT.
 | `GET /pontos-coleta` | público | Lista de pontos ativos/cadastrados |
 | `GET /notificacoes` | público | Avisos publicados |
 | `GET /agendamentos` | autenticado | Agendamentos da conta atual |
+| `GET /agendamentos/disponibilidade?pontoId=...&data=AAAA-MM-DD` | autenticado | Horários ocupados e disponíveis |
 | `POST /agendamentos` | autenticado | Criar agendamento |
 | `GET /coletas` | autenticado | Histórico da conta atual |
 | `GET /imoveis` | autenticado | Imóveis vinculados à conta atual |
@@ -118,7 +120,10 @@ usa mais os arrays de demonstração:
 - `coletas/{id}`: `usuarioId` (ID do documento do usuário), `quantidade`,
   `material`, `entregador`, `responsavel`, `endereco`, `data` e `horario`.
 - `agendamentos/{id}` é criado pelo `POST /agendamentos` e recebe o `usuarioId`
-  do token, além de ponto, data, horário, modalidade, materiais e status.
+  do token, além de ponto, endereço, data, horário, modalidade, materiais,
+  `telefoneContato` e status.
+- `reservasHorariosAgendamento/{id}` reserva atomicamente a combinação de
+  ponto, data e horário, impedindo que duas contas confirmem a mesma vaga.
 - `imoveis/{id}`: `usuarioId` (ID do documento do usuário), `cep`, `rua`,
   `numero`, `endereco`, `bairro`, `complemento`, `inscricaoImobiliaria`,
   `vinculo` (`proprietario`, `inquilino` ou `residente`) e `criadoEm`.

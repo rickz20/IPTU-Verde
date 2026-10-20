@@ -25,7 +25,7 @@ export default function CardMeuAgendamento({ agendamento }) {
       <View style={styles.detalhes}>
         <View style={styles.linha}>
           <View style={styles.coluna}>
-            <Text style={styles.rotulo}>Local de entrega</Text>
+            <Text style={styles.rotulo}>Local da coleta</Text>
             <Text style={styles.titulo}>{agendamento.ponto}</Text>
             <Text style={styles.valorEmNegrito}>{agendamento.endereco}</Text>
           </View>

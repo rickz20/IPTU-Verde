@@ -14,6 +14,7 @@ import {
   findPointById,
   listNotifications,
   listPoints,
+  listBookedBookingSlots,
   listUserBookings,
   listUserCollections,
   listUserProperties,
@@ -42,6 +43,20 @@ const passwordLimiter = rateLimit({
   legacyHeaders: false,
   message: { erro: 'Muitas tentativas. Tente novamente mais tarde.' },
 });
+const BOOKING_TIME_SLOTS = [
+  '08:00',
+  '08:30',
+  '09:00',
+  '09:30',
+  '10:00',
+  '10:30',
+  '11:00',
+  '11:30',
+  '13:00',
+  '13:30',
+  '14:00',
+  '14:30',
+];
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
@@ -321,16 +336,69 @@ router.get('/agendamentos', requireAuth, async (request, response, next) => {
   }
 });
 
+router.get(
+  '/agendamentos/disponibilidade',
+  requireAuth,
+  async (request, response, next) => {
+    try {
+      const { pontoId, data } = request.query;
+      if (
+        typeof pontoId !== 'string' ||
+        pontoId.trim().length === 0 ||
+        typeof data !== 'string' ||
+        !isValidFutureDate(data)
+      ) {
+        return response.status(400).json({
+          erro: 'Informe um ponto de coleta e uma data válida, hoje ou futura.',
+        });
+      }
+
+      const point = await findPointById(pontoId);
+      if (!point) {
+        return response
+          .status(404)
+          .json({ erro: 'Ponto de coleta não encontrado.' });
+      }
+
+      const horariosOcupados = await listBookedBookingSlots(
+        pontoId,
+        data,
+        BOOKING_TIME_SLOTS,
+      );
+      const horariosDisponiveis = BOOKING_TIME_SLOTS.filter(
+        (horario) => !horariosOcupados.includes(horario),
+      );
+      return response.status(200).json({
+        horariosDisponiveis,
+        horariosOcupados,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
+
 router.post('/agendamentos', requireAuth, async (request, response, next) => {
   try {
-    const { pontoId, data, horario, modalidade, materiais, endereco } =
-      request.body ?? {};
+    const {
+      pontoId,
+      data,
+      horario,
+      modalidade,
+      materiais,
+      endereco,
+      telefone,
+    } = request.body ?? {};
+    const telefoneDigits =
+      typeof telefone === 'string' ? telefone.replace(/\D/g, '') : '';
     if (
       typeof pontoId !== 'string' ||
       typeof data !== 'string' ||
       !/^\d{4}-\d{2}-\d{2}$/.test(data) ||
       typeof horario !== 'string' ||
       horario.trim().length > 80 ||
+      !BOOKING_TIME_SLOTS.includes(horario.trim()) ||
+      ![10, 11].includes(telefoneDigits.length) ||
       !['ponto', 'domicilio'].includes(modalidade) ||
       (modalidade === 'domicilio' &&
         (typeof endereco !== 'string' ||
@@ -360,12 +428,14 @@ router.post('/agendamentos', requireAuth, async (request, response, next) => {
 
     const agendamento = await createUserBooking(request.usuario.id, {
       pontoId,
-      ponto: point.nome,
+      ponto:
+        modalidade === 'domicilio' ? 'Coleta em domicílio' : point.nome,
       endereco: modalidade === 'domicilio' ? endereco.trim() : point.endereco,
       data,
       horario: horario.trim(),
       modalidade,
       materiais: materiais.map((material) => material.trim()),
+      telefoneContato: telefoneDigits,
     });
     return response.status(201).json({ agendamento });
   } catch (error) {
