@@ -23,6 +23,7 @@ import TelaPerfil from './TelaPerfil';
 import TelaEmBranco from './TelaEmBranco';
 import TodasColetas from './TodasColetas';
 import TelaMeusDados from './TelaMeusDados';
+import TelaEditarDados from './TelaEditarDados';
 import TelaMeusImoveis from './TelaMeusImoveis';
 import TelaAlterarSenha from './TelaAlterarSenha';
 import TelaComoReciclar from './TelaComoReciclar';
@@ -76,8 +77,20 @@ export default function TelaInicial({ onSair, sessao }) {
   if (telaAtual === 'meus-dados') {
     return (
       <TelaMeusDados
+        sessao={sessao}
         token={sessao?.token}
         onVoltar={() => setTelaAtual('perfil')}
+        onAlterarDados={() => setTelaAtual('editar-dados')}
+        onAlterarSenha={() => setTelaAtual('alterar-senha-meus-dados')}
+      />
+    );
+  }
+
+  if (telaAtual === 'editar-dados') {
+    return (
+      <TelaEditarDados
+        token={sessao?.token}
+        onVoltar={() => setTelaAtual('meus-dados')}
       />
     );
   }
@@ -96,6 +109,15 @@ export default function TelaInicial({ onSair, sessao }) {
       <TelaAlterarSenha
         token={sessao?.token}
         onVoltar={() => setTelaAtual('perfil')}
+      />
+    );
+  }
+
+  if (telaAtual === 'alterar-senha-meus-dados') {
+    return (
+      <TelaAlterarSenha
+        token={sessao?.token}
+        onVoltar={() => setTelaAtual('meus-dados')}
       />
     );
   }

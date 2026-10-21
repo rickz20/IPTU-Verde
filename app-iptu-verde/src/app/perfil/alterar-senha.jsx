@@ -8,7 +8,9 @@ export default function AlterarSenha() {
   const rotaAnterior =
     origem === 'seguranca-privacidade'
       ? '/perfil/seguranca-privacidade'
-      : '/perfil';
+      : origem === 'meus-dados'
+        ? '/perfil/meus-dados'
+        : '/perfil';
 
   return <TelaAlterarSenha onVoltar={() => router.replace(rotaAnterior)} />;
 }
