@@ -10,6 +10,7 @@ import {
   updateUserProfile,
 } from '../repositories/userRepository.js';
 import {
+  createUserProperty,
   createUserBooking,
   findPointById,
   listNotifications,
@@ -458,6 +459,55 @@ router.get('/imoveis', requireAuth, async (request, response, next) => {
     return response.status(200).json({
       imoveis: await listUserProperties(request.usuario.id),
     });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post('/imoveis', requireAuth, async (request, response, next) => {
+  try {
+    const {
+      bairro,
+      cep,
+      complemento,
+      inscricaoImobiliaria,
+      numero,
+      rua,
+    } = request.body ?? {};
+    const cepDigits = typeof cep === 'string' ? cep.replace(/\D/g, '') : '';
+
+    if (
+      typeof rua !== 'string' ||
+      rua.trim().length < 2 ||
+      rua.trim().length > 120 ||
+      typeof numero !== 'string' ||
+      numero.trim().length < 1 ||
+      numero.trim().length > 20 ||
+      typeof bairro !== 'string' ||
+      bairro.trim().length < 2 ||
+      bairro.trim().length > 80 ||
+      cepDigits.length !== 8 ||
+      typeof inscricaoImobiliaria !== 'string' ||
+      inscricaoImobiliaria.trim().length < 1 ||
+      inscricaoImobiliaria.trim().length > 40 ||
+      (complemento !== undefined &&
+        (typeof complemento !== 'string' || complemento.trim().length > 120))
+    ) {
+      return response.status(400).json({
+        erro:
+          'Confira rua, número, bairro, CEP e inscrição imobiliária do imóvel.',
+      });
+    }
+
+    const imovel = await createUserProperty(request.usuario.id, {
+      rua: rua.trim(),
+      numero: numero.trim(),
+      bairro: bairro.trim(),
+      cep: cepDigits,
+      complemento: complemento?.trim() ?? '',
+      inscricaoImobiliaria: inscricaoImobiliaria.trim(),
+    });
+    return response.status(201).json({ imovel });
   } catch (error) {
     return next(error);
   }

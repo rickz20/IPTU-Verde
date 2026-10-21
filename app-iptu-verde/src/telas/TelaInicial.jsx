@@ -25,6 +25,7 @@ import TodasColetas from './TodasColetas';
 import TelaMeusDados from './TelaMeusDados';
 import TelaEditarDados from './TelaEditarDados';
 import TelaMeusImoveis from './TelaMeusImoveis';
+import TelaAdicionarImovel from './TelaAdicionarImovel';
 import TelaAlterarSenha from './TelaAlterarSenha';
 import TelaComoReciclar from './TelaComoReciclar';
 import TelaSegurancaPrivacidade from './TelaSegurancaPrivacidade';
@@ -100,6 +101,17 @@ export default function TelaInicial({ onSair, sessao }) {
       <TelaMeusImoveis
         token={sessao?.token}
         onVoltar={() => setTelaAtual('perfil')}
+        onAdicionarImovel={() => setTelaAtual('adicionar-imovel')}
+      />
+    );
+  }
+
+  if (telaAtual === 'adicionar-imovel') {
+    return (
+      <TelaAdicionarImovel
+        token={sessao?.token}
+        onVoltar={() => setTelaAtual('meus-imoveis')}
+        onAdicionado={() => setTelaAtual('meus-imoveis')}
       />
     );
   }

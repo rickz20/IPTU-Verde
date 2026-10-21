@@ -152,3 +152,20 @@ export async function listUserProperties(userId) {
     .get();
   return snapshot.docs.map(toRecord);
 }
+
+export async function createUserProperty(userId, property) {
+  const reference = database.collection(propertiesCollection).doc();
+  const record = {
+    ...property,
+    usuarioId: userId,
+    endereco: `${property.rua}, ${property.numero}`,
+    criadoEm: FieldValue.serverTimestamp(),
+  };
+  await reference.create(record);
+  return {
+    ...property,
+    usuarioId: userId,
+    endereco: record.endereco,
+    id: reference.id,
+  };
+}
