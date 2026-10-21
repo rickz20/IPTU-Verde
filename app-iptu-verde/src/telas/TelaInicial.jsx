@@ -20,7 +20,7 @@ import MenuInferior from '../components/telaInicial/MenuInferior';
 import MeusAgendamentos from './MeusAgendamentos';
 import TelaNotificacoes from './TelaNotificacoes';
 import TelaPerfil from './TelaPerfil';
-import TelaEmBranco from './TelaEmBranco';
+import TelaAjudaSuporte from './TelaAjudaSuporte';
 import TodasColetas from './TodasColetas';
 import TelaMeusDados from './TelaMeusDados';
 import TelaEditarDados from './TelaEditarDados';
@@ -155,10 +155,7 @@ export default function TelaInicial({ onSair, sessao }) {
 
   if (telaAtual === 'ajuda-suporte') {
     return (
-      <TelaEmBranco
-        titulo="Ajuda e suporte"
-        onVoltar={() => setTelaAtual('perfil')}
-      />
+      <TelaAjudaSuporte onVoltar={() => setTelaAtual('perfil')} />
     );
   }
 
