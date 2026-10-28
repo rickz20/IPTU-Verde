@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   },
   textoCentral: {
     color: CORES.branco,
-    fontSize: rem(0.75),
+    fontSize: rem(1),
     fontFamily: 'Inter_400Regular',
   },
   iconeMenu: {
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textoMenu: {
-    fontSize: rem(1),
+    fontSize: rem(1.125),
     color: CORES.branco,
     fontFamily: 'Inter_400Regular',
   },

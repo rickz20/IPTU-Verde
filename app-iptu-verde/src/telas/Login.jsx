@@ -16,6 +16,7 @@ import InputCadastro from '../components/InputCadastro';
 import AlertIcon from '../../assets/alert-circle.svg';
 import LogoIptuVerde from '../../assets/logo iptuverde.svg';
 import TelaInicial from './TelaInicial';
+import TelaAdmin from './TelaAdmin';
 import { apiRequest } from '../services/api';
 
 const PRIMARY_COLOR = '#94B310';
@@ -325,9 +326,7 @@ export default function Login() {
       if (result.usuario.tipo === 'pagador') {
         setShowHome(true);
       } else if (result.usuario.tipo === 'adm') {
-        setSuccessMessage(
-          'Acesso de administrador confirmado. O painel administrativo será disponibilizado em breve.',
-        );
+        setShowHome(true);
       } else {
         setSession(null);
         setErrorMessage('O tipo desta conta não é compatível com o aplicativo.');
@@ -545,6 +544,9 @@ export default function Login() {
   if (showHome) {
     if (session?.usuario?.tipo === 'pagador') {
       return <TelaInicial onSair={handleLogout} sessao={session} />;
+    }
+    if (session?.usuario?.tipo === 'adm') {
+      return <TelaAdmin onSair={handleLogout} usuario={session.usuario} />;
     }
   }
 
