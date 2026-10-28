@@ -102,7 +102,7 @@ de dados pessoais; identifica a conta a partir do JWT.
 | Endpoint | Acesso | Uso |
 | --- | --- | --- |
 | `GET /auth/me` | autenticado | Dados da conta atual |
-| `PATCH /auth/me` | autenticado | Atualizar nome e/ou telefone |
+| `PATCH /auth/me` | autenticado | Atualizar nome, estado civil e/ou telefone |
 | `PATCH /auth/password` | autenticado | Alterar senha, validando a senha atual |
 | `GET /pontos-coleta` | público | Lista de pontos ativos/cadastrados |
 | `GET /notificacoes` | público | Avisos publicados |

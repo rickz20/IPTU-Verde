@@ -1,8 +1,8 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { CORES } from './telaInicial/tema';
 
-export default function AvatarPerfil({ onEditar = () => {} }) {
+export default function AvatarPerfil() {
   return (
     <View style={styles.container}>
       <View style={styles.avatar}>
@@ -25,30 +25,6 @@ export default function AvatarPerfil({ onEditar = () => {} }) {
           />
         </Svg>
       </View>
-
-      <Pressable
-        style={styles.botaoEditar}
-        onPress={onEditar}
-        accessibilityRole="button"
-        accessibilityLabel="Editar foto do perfil"
-      >
-        <Svg width={18} height={18} viewBox="0 0 24 24">
-          <Path
-            d="m4 16.5-.8 4.3 4.3-.8L19.8 7.7a2.1 2.1 0 0 0-3-3L4 16.5Z"
-            fill="none"
-            stroke={CORES.texto}
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <Path
-            d="m15.5 6.5 3 3"
-            fill="none"
-            stroke={CORES.texto}
-            strokeWidth="2"
-          />
-        </Svg>
-      </Pressable>
     </View>
   );
 }
@@ -58,25 +34,11 @@ const styles = StyleSheet.create({
     width: 112,
     height: 112,
     alignSelf: 'center',
-    position: 'relative',
   },
   avatar: {
     width: 112,
     height: 112,
     borderRadius: 56,
     overflow: 'hidden',
-  },
-  botaoEditar: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: '#E2E2E2',
-    backgroundColor: CORES.branco,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

@@ -1,6 +1,7 @@
 import { rem } from '../utils/typography';
 import { useState } from 'react';
 import {
+  Modal,
   Pressable,
   ScrollView,
   StatusBar,
@@ -15,6 +16,16 @@ import InputCadastro from '../components/InputCadastro';
 import { CORES } from '../components/telaInicial/tema';
 import { useApiData } from '../hooks/useApiData';
 import { apiRequest } from '../services/api';
+
+const OPCOES_ESTADO_CIVIL = [
+  'Solteiro(a)',
+  'Casado(a)',
+  'União estável',
+  'Separado(a)',
+  'Divorciado(a)',
+  'Viúvo(a)',
+  'Prefiro não informar',
+];
 
 export default function TelaEditarDados({ onVoltar, token }) {
   const {
@@ -38,7 +49,7 @@ export default function TelaEditarDados({ onVoltar, token }) {
         </View>
 
         <Text style={styles.descricao}>
-          Atualize seu nome e telefone de contato.
+          Atualize seu nome, estado civil e telefone de contato.
         </Text>
 
         {loading || error ? (
@@ -62,6 +73,11 @@ export default function TelaEditarDados({ onVoltar, token }) {
 
 function FormularioEdicao({ usuario, token, onVoltar }) {
   const [nome, setNome] = useState(usuario.nome ?? '');
+  const [estadoCivil, setEstadoCivil] = useState(
+    usuario.estadoCivil ?? usuario.estado_civil ?? '',
+  );
+  const [mostrarOpcoesEstadoCivil, setMostrarOpcoesEstadoCivil] =
+    useState(false);
   const [telefone, setTelefone] = useState(usuario.telefone ?? '');
   const [erroFormulario, setErroFormulario] = useState('');
   const [salvando, setSalvando] = useState(false);
@@ -84,7 +100,11 @@ function FormularioEdicao({ usuario, token, onVoltar }) {
       await apiRequest('/auth/me', {
         method: 'PATCH',
         token,
-        body: JSON.stringify({ nome: nome.trim(), telefone }),
+        body: JSON.stringify({
+          nome: nome.trim(),
+          estadoCivil: estadoCivil.trim(),
+          telefone: telefone.trim(),
+        }),
       });
       onVoltar?.();
     } catch (requestError) {
@@ -107,6 +127,24 @@ function FormularioEdicao({ usuario, token, onVoltar }) {
         }
         containerStyle={styles.campo}
       />
+      <Text style={styles.rotulo}>Estado civil</Text>
+      <Pressable
+        style={styles.seletorEstadoCivil}
+        onPress={() => setMostrarOpcoesEstadoCivil(true)}
+        accessibilityRole="button"
+        accessibilityLabel={`Estado civil: ${estadoCivil || 'não selecionado'}`}
+        accessibilityHint="Abre a lista de opções de estado civil"
+      >
+        <Text
+          style={[
+            styles.textoSeletor,
+            !estadoCivil && styles.placeholderSeletor,
+          ]}
+        >
+          {estadoCivil || 'Selecione'}
+        </Text>
+        <Text style={styles.setaSeletor}>⌄</Text>
+      </Pressable>
       <Text style={styles.rotulo}>Telefone</Text>
       <InputCadastro
         placeholder="Telefone com DDD"
@@ -133,6 +171,45 @@ function FormularioEdicao({ usuario, token, onVoltar }) {
           {salvando ? 'Salvando...' : 'Salvar alterações'}
         </Text>
       </Pressable>
+      <Modal
+        transparent
+        visible={mostrarOpcoesEstadoCivil}
+        animationType="fade"
+        onRequestClose={() => setMostrarOpcoesEstadoCivil(false)}
+      >
+        <Pressable
+          style={styles.fundoModal}
+          onPress={() => setMostrarOpcoesEstadoCivil(false)}
+        >
+          <Pressable style={styles.listaEstadoCivil} onPress={() => {}}>
+            <Text style={styles.tituloModal}>Estado civil</Text>
+            {OPCOES_ESTADO_CIVIL.map((opcao) => (
+              <Pressable
+                key={opcao}
+                style={styles.opcaoEstadoCivil}
+                onPress={() => {
+                  setEstadoCivil(opcao);
+                  setMostrarOpcoesEstadoCivil(false);
+                }}
+                accessibilityRole="button"
+                accessibilityState={{ selected: estadoCivil === opcao }}
+              >
+                <Text
+                  style={[
+                    styles.textoOpcaoEstadoCivil,
+                    estadoCivil === opcao && styles.opcaoSelecionada,
+                  ]}
+                >
+                  {opcao}
+                </Text>
+                {estadoCivil === opcao ? (
+                  <Text style={styles.marcaSelecionada}>✓</Text>
+                ) : null}
+              </Pressable>
+            ))}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -176,6 +253,72 @@ const styles = StyleSheet.create({
   },
   campo: {
     marginBottom: 12,
+  },
+  seletorEstadoCivil: {
+    minHeight: 52,
+    marginBottom: 12,
+    paddingHorizontal: 12,
+    borderRadius: 7,
+    backgroundColor: '#F0F0F0',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  textoSeletor: {
+    color: '#333333',
+    fontSize: rem(1),
+    fontFamily: 'Inter_400Regular',
+  },
+  placeholderSeletor: {
+    color: '#777777',
+  },
+  setaSeletor: {
+    color: CORES.textoSecundario,
+    fontSize: rem(1.375),
+    lineHeight: rem(1.5),
+  },
+  fundoModal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    backgroundColor: 'rgba(13, 13, 13, 0.36)',
+  },
+  listaEstadoCivil: {
+    width: '100%',
+    maxWidth: 380,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderRadius: 16,
+    backgroundColor: CORES.branco,
+  },
+  tituloModal: {
+    marginBottom: 8,
+    color: CORES.texto,
+    fontSize: rem(1.125),
+    fontFamily: 'Alexandria_700Bold',
+  },
+  opcaoEstadoCivil: {
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#E2E2E2',
+  },
+  textoOpcaoEstadoCivil: {
+    color: CORES.texto,
+    fontSize: rem(1),
+    fontFamily: 'Inter_400Regular',
+  },
+  opcaoSelecionada: {
+    color: CORES.verdeEscuro,
+    fontFamily: 'Inter_700Bold',
+  },
+  marcaSelecionada: {
+    color: CORES.verdeEscuro,
+    fontSize: rem(1),
+    fontFamily: 'Inter_700Bold',
   },
   erro: {
     color: '#9E252C',

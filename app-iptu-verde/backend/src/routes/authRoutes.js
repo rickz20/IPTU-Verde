@@ -207,9 +207,24 @@ router.get('/auth/me', requireAuth, async (request, response, next) => {
       return response.status(404).json({ erro: 'Conta não encontrada.' });
     }
 
-    const { cpf, email, nome, telefone, tipo } = user;
+    const {
+      cpf,
+      email,
+      nome,
+      estadoCivil = user.estado_civil,
+      telefone,
+      tipo,
+    } = user;
     return response.status(200).json({
-      usuario: { id: user.id, cpf, email, nome, telefone, tipo },
+      usuario: {
+        id: user.id,
+        cpf,
+        email,
+        nome,
+        estadoCivil,
+        telefone,
+        tipo,
+      },
     });
   } catch (error) {
     return next(error);
@@ -218,7 +233,7 @@ router.get('/auth/me', requireAuth, async (request, response, next) => {
 
 router.patch('/auth/me', requireAuth, async (request, response, next) => {
   try {
-    const { nome, telefone } = request.body ?? {};
+    const { nome, estadoCivil, telefone } = request.body ?? {};
     const update = {};
 
     if (nome !== undefined) {
@@ -243,6 +258,18 @@ router.patch('/auth/me', requireAuth, async (request, response, next) => {
       update.telefone = telefone.trim();
     }
 
+    if (estadoCivil !== undefined) {
+      if (
+        typeof estadoCivil !== 'string' ||
+        estadoCivil.trim().length > 40
+      ) {
+        return response
+          .status(400)
+          .json({ erro: 'Informe um estado civil válido.' });
+      }
+      update.estadoCivil = estadoCivil.trim();
+    }
+
     if (Object.keys(update).length === 0) {
       return response.status(400).json({ erro: 'Nenhum dado para atualizar.' });
     }
@@ -253,6 +280,7 @@ router.patch('/auth/me', requireAuth, async (request, response, next) => {
       cpf,
       email,
       nome: nomeAtualizado,
+      estadoCivil: estadoCivilAtualizado = user.estado_civil,
       telefone: telefoneAtualizado,
       tipo,
     } = user;
@@ -263,6 +291,7 @@ router.patch('/auth/me', requireAuth, async (request, response, next) => {
         email,
         nome: nomeAtualizado,
         telefone: telefoneAtualizado,
+        estadoCivil: estadoCivilAtualizado,
         tipo,
       },
     });
