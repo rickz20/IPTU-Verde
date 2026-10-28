@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { rem } from '../utils/typography';
 import {
+  Image,
   Pressable,
   ScrollView,
   StatusBar,
@@ -10,9 +11,16 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BotaoVoltar from '../components/BotaoVoltar';
-import IlustracaoDica from '../components/reciclagem/IlustracaoDica';
 import { dicasReciclagem } from '../components/reciclagem/dadosDicasReciclagem';
 import { CORES } from '../components/telaInicial/tema';
+
+const IMAGENS_DICAS = {
+  separar: require('../../assets/reciclagem-separacao.jpg'),
+  lixeiras: require('../../assets/reciclagem-lixeiras.jpg'),
+  'pode-nao-pode': require('../../assets/reciclagem-pode-nao-pode.jpg'),
+  eletronicos: require('../../assets/reciclagem-eletronicos.jpg'),
+  oleo: require('../../assets/reciclagem-oleo.jpg'),
+};
 
 export default function TelaComoReciclar({ onVoltar }) {
   const [dicaSelecionada, setDicaSelecionada] = useState(null);
@@ -91,7 +99,12 @@ export default function TelaComoReciclar({ onVoltar }) {
                 ]}
               >
                 <View style={styles.areaImagem}>
-                  <IlustracaoDica tipo={pagina.ilustracao} />
+                  <Image
+                    source={IMAGENS_DICAS[dicaSelecionada.id]}
+                    style={styles.fotoTutorial}
+                    resizeMode="cover"
+                    accessible={false}
+                  />
                 </View>
 
                 <View style={styles.painelDica}>
@@ -147,7 +160,12 @@ export default function TelaComoReciclar({ onVoltar }) {
                 accessibilityLabel={`${dica.titulo}. ${dica.descricao}`}
               >
                 <View style={styles.ilustracaoCartao}>
-                  <Text style={styles.iconeReciclagem}>♻</Text>
+                  <Image
+                    source={IMAGENS_DICAS[dica.id]}
+                    style={styles.fotoCartao}
+                    resizeMode="cover"
+                    accessible={false}
+                  />
                 </View>
                 <View style={styles.textosCartao}>
                   <Text style={styles.tituloCartao}>{dica.titulo}</Text>
@@ -202,39 +220,43 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   areaImagem: {
-    flex: 1.5,
+    flex: 1.1,
     minHeight: 120,
     overflow: 'hidden',
     backgroundColor: CORES.branco,
   },
+  fotoTutorial: {
+    width: '100%',
+    height: '100%',
+  },
   painelDica: {
-    flex: 1,
-    minHeight: 205,
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: 32,
+    flex: 1.4,
+    minHeight: 230,
+    paddingHorizontal: 28,
+    paddingTop: 28,
+    paddingBottom: 24,
     alignItems: 'center',
     backgroundColor: CORES.verde,
   },
   tituloDica: {
-    marginBottom: 14,
+    marginBottom: 18,
     color: CORES.branco,
-    fontSize: rem(1),
-    lineHeight: rem(1.25),
+    fontSize: rem(1.25),
+    lineHeight: rem(1.5),
     textAlign: 'center',
     fontFamily: 'Alexandria_700Bold',
   },
   descricaoDica: {
     maxWidth: 330,
     color: CORES.branco,
-    fontSize: rem(0.875),
-    lineHeight: rem(1.125),
+    fontSize: rem(1.0625),
+    lineHeight: rem(1.5),
     textAlign: 'center',
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'Inter_400Regular',
   },
   indicadores: {
     marginTop: 'auto',
-    paddingTop: 18,
+    paddingTop: 28,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
@@ -267,8 +289,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   cartao: {
-    minHeight: 82,
-    padding: 10,
+    minHeight: 112,
+    padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
@@ -277,30 +299,28 @@ const styles = StyleSheet.create({
   },
   ilustracaoCartao: {
     width: '40%',
-    height: 58,
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: 86,
     borderRadius: 13,
-    backgroundColor: CORES.amarelo,
+    overflow: 'hidden',
   },
-  iconeReciclagem: {
-    color: '#F2C75F',
-    fontSize: rem(2.5),
+  fotoCartao: {
+    width: '100%',
+    height: '100%',
   },
   textosCartao: {
     flex: 1,
-    gap: 3,
+    gap: 6,
   },
   tituloCartao: {
     color: CORES.texto,
-    fontSize: rem(0.875),
-    lineHeight: rem(1.125),
+    fontSize: rem(1),
+    lineHeight: rem(1.25),
     fontFamily: 'Alexandria_700Bold',
   },
   descricaoCartao: {
     color: CORES.textoSecundario,
-    fontSize: rem(0.875),
-    lineHeight: rem(1.125),
+    fontSize: rem(0.9375),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_400Regular',
   },
   setaCartao: {
