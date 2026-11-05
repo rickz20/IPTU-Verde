@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "app-iptu-verde",
-    "slug": "app-iptu-verde",
+    "slug": "iptu-verde",
     "scheme": "iptuverde",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,7 +23,17 @@
     "plugins": [
       "expo-font",
       "expo-router"
-    ]
-
+    ],
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "267715a5-daef-49ee-a4cd-346f934234c2"
+      }
+    },
+    "owner": "andressasza"
   }
 }
