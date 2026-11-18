@@ -1,7 +1,7 @@
 import { rem } from '../../utils/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import IconeNotificacao from '../../../assets/Bell.svg';
-import LogoIptuVerde from '../../../assets/logo iptuverde.svg';
+import SimboloIptuVerde from '../../../assets/SIMBOLO.svg';
 import { CORES } from './tema';
 
 export default function Cabecalho({
@@ -11,10 +11,17 @@ export default function Cabecalho({
   return (
     <View style={styles.cabecalho}>
       <View style={styles.marca}>
-        <LogoIptuVerde
-          style={styles.logoImagem}
+        <View
+          style={styles.identidade}
+          accessibilityRole="image"
           accessibilityLabel="Logo IPTU Verde"
-        />
+        >
+          <SimboloIptuVerde width={44} height={44} />
+          <Text style={styles.nomeMarca}>
+            <Text style={styles.nomeMarcaDestaque}>IPTU</Text>
+            {' Verde'}
+          </Text>
+        </View>
       </View>
 
       <Pressable
@@ -53,9 +60,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  logoImagem: {
-    width: 180,
-    height: 50,
+  identidade: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  nomeMarca: {
+    color: CORES.verde,
+    fontSize: rem(1.125),
+    fontFamily: 'Alexandria_700Bold',
+  },
+  nomeMarcaDestaque: {
+    color: CORES.verdeEscuro,
   },
   botaoNotificacao: {
     width: 46,

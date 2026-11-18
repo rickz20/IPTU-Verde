@@ -23,6 +23,7 @@ import {
 } from '../repositories/appRepository.js';
 import { requireAuth } from '../middleware/requireAuth.js';
 import { getBusinessDate } from '../services/dateUtils.js';
+import { calculateDiscountProgress } from '../services/discountProgress.js';
 
 const router = Router();
 const loginLimiter = rateLimit({
@@ -550,8 +551,13 @@ router.post('/agendamentos', requireAuth, async (request, response, next) => {
 
 router.get('/coletas', requireAuth, async (request, response, next) => {
   try {
+    const coletas = await listUserCollections(request.usuario.id);
     return response.status(200).json({
-      coletas: await listUserCollections(request.usuario.id),
+      coletas,
+      progressoDesconto: calculateDiscountProgress(
+        coletas,
+        Number(getBusinessDate().slice(0, 4)),
+      ),
     });
   } catch (error) {
     return next(error);

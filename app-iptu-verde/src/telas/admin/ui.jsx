@@ -1,23 +1,24 @@
 import { rem } from '../../utils/typography';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import LogoIptuVerde from '../../../assets/logo iptuverde.svg';
+import SimboloIptuVerde from '../../../assets/SIMBOLO.svg';
 import { CORES } from '../../components/telaInicial/tema';
 
 export const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: CORES.branco },
   scroll: { flex: 1 },
   content: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 24 },
-  header: { minHeight: 52, marginBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  header: { width: '100%', minHeight: 84, marginBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 4, flexShrink: 0 },
   subHeader: { minHeight: 64, marginBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 12 },
   backButton: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: CORES.amarelo },
   subHeaderText: { flex: 1 },
   subTitle: { color: CORES.texto, fontSize: rem(1.25), fontFamily: 'Alexandria_700Bold' },
   subSubtitle: { marginTop: 2, color: CORES.textoSecundario, fontSize: rem(0.75), fontFamily: 'Inter_400Regular' },
-  logo: { width: 150, height: 44 },
-  badge: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 16, backgroundColor: '#F1F4DF' },
+  logo: { width: 84, height: 84 },
+  badge: { paddingHorizontal: 8, paddingVertical: 6, borderRadius: 16, backgroundColor: '#F1F4DF', flexShrink: 1 },
   badgeText: { color: CORES.verdeEscuro, fontSize: rem(0.75), fontFamily: 'Inter_700Bold' },
-  logout: { padding: 8 },
+  logout: { width: 36, height: 40, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   title: { color: CORES.texto, fontSize: rem(1.5), lineHeight: rem(1.9), fontFamily: 'Alexandria_700Bold' },
   subtitle: { marginTop: 2, marginBottom: 16, color: CORES.textoSecundario, fontSize: rem(0.875), lineHeight: rem(1.25), fontFamily: 'Inter_400Regular' },
   sectionTitle: { marginTop: 16, marginBottom: 6, color: CORES.texto, fontSize: rem(1.0625), fontFamily: 'Alexandria_700Bold' },
@@ -45,9 +46,9 @@ export const styles = StyleSheet.create({
 export function AdminHeader({ onLogout }) {
   return (
     <View style={styles.header}>
-      <LogoIptuVerde style={styles.logo} accessibilityLabel="IPTU Verde Quixadá" />
-      <View style={styles.row}>
-        <View style={styles.badge}><Text style={styles.badgeText}>Administrador</Text></View>
+      <SimboloIptuVerde width={84} height={84} style={styles.logo} accessibilityLabel="Símbolo IPTU Verde" />
+      <View style={styles.headerActions}>
+        <View style={styles.badge}><Text style={styles.badgeText} numberOfLines={1}>Administrador</Text></View>
         <Pressable onPress={onLogout} style={styles.logout} accessibilityRole="button" accessibilityLabel="Sair da conta">
           <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
             <Path d="M10 5H5v14h5m3-11 4 4-4 4m4-4H9" stroke={CORES.textoSecundario} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />

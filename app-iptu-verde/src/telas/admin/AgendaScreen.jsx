@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
+import SettingsIcon from '../settings-2.svg';
 import AdminIcon from './AdminIcon';
 import { Botao, Page, styles, Titulo } from './ui';
 import { toLocalIso } from './CalendarPicker';
@@ -10,9 +11,7 @@ const LEGACY_SLOTS = [
 ];
 
 function monthOffset(date, offset) {
-  const first = new Date(date.getFullYear(), date.getMonth() + offset, 1);
-  const day = Math.min(date.getDate(), new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate());
-  return new Date(first.getFullYear(), first.getMonth(), day);
+  return new Date(date.getFullYear(), date.getMonth() + offset, 1);
 }
 
 function getDailyCapacity(schedule) {
@@ -103,13 +102,36 @@ export default function AgendaScreen({
   return (
     <Page onLogout={onLogout}>
       <Titulo title="Agenda de atendimento" subtitle="Organize os horários e acompanhe as vagas." />
-      <Botao title="☷  Configurar atendimento" onPress={onConfigure} />
-      <View style={styles.row}>
-        <Pressable onPress={() => setSelectedDate((current) => monthOffset(current, -1))} accessibilityLabel="Mês anterior"><Text style={styles.title}>‹</Text></Pressable>
-        <Text style={[styles.body, { textTransform: 'capitalize', fontFamily: 'Inter_700Bold' }]}>{month}</Text>
-        <Pressable onPress={() => setSelectedDate((current) => monthOffset(current, 1))} accessibilityLabel="Próximo mês"><Text style={styles.title}>›</Text></Pressable>
+      <Pressable
+        onPress={onConfigure}
+        style={styles.button}
+        accessibilityRole="button"
+      >
+        <SettingsIcon width={18} height={18} />
+        <Text style={styles.buttonText}>Configurar atendimento</Text>
+      </Pressable>
+      <View style={[styles.row, { minHeight: 52, marginTop: 8, marginBottom: 4 }]}>
+        <Pressable
+          onPress={() => setSelectedDate((current) => monthOffset(current, -1))}
+          style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: '#F1F4DF', alignItems: 'center', justifyContent: 'center' }}
+          accessibilityRole="button"
+          accessibilityLabel="Mês anterior"
+          hitSlop={4}
+        >
+          <Text style={{ color: '#6D8C09', fontSize: 36, lineHeight: 40 }}>‹</Text>
+        </Pressable>
+        <Text style={[styles.body, { flex: 1, textAlign: 'center', textTransform: 'capitalize', fontFamily: 'Inter_700Bold' }]}>{month}</Text>
+        <Pressable
+          onPress={() => setSelectedDate((current) => monthOffset(current, 1))}
+          style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: '#F1F4DF', alignItems: 'center', justifyContent: 'center' }}
+          accessibilityRole="button"
+          accessibilityLabel="Próximo mês"
+          hitSlop={4}
+        >
+          <Text style={{ color: '#6D8C09', fontSize: 36, lineHeight: 40 }}>›</Text>
+        </Pressable>
       </View>
-      <View style={[styles.row, { marginTop: 8, marginBottom: 12 }]}>
+      <View style={[styles.row, { marginTop: 4, marginBottom: 12 }]}>
         {week.map((day) => {
           const chosen = day.toDateString() === selectedDate.toDateString();
           return (

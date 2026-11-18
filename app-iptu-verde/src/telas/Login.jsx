@@ -14,7 +14,7 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import InputCadastro from '../components/InputCadastro';
 import AlertIcon from '../../assets/alert-circle.svg';
-import LogoIptuVerde from '../../assets/logo iptuverde.svg';
+import LogoIptuVerde from '../../assets/LOGO_V2.svg';
 import TelaInicial from './TelaInicial';
 import TelaAdmin from './TelaAdmin';
 import { apiRequest } from '../services/api';
@@ -569,6 +569,9 @@ export default function Login() {
         <View style={styles.content}>
           <LogoIptuVerde
             style={styles.logo}
+            width={390}
+            height={276}
+            accessibilityRole="image"
             accessibilityLabel="Logo IPTU Verde"
           />
 
@@ -807,8 +810,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   logo: {
-    width: 184,
-    height: 56,
+    width: '100%',
+    maxWidth: 390,
+    height: 276,
     alignSelf: 'center',
     marginBottom: 22,
   },

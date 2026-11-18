@@ -2,6 +2,8 @@ import { rem } from '../../utils/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Path, Rect } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import MateriaisIcon from '../../../assets/Materiais.svg';
+import SolicitacoesIcon from '../../../assets/solicitacoes.svg';
 import { CORES } from '../../components/telaInicial/tema';
 
 const ABAS = [
@@ -25,9 +27,36 @@ export default function MenuAdmin({ selected, onSelect }) {
   return (
     <View style={[styles.menu, { paddingBottom: Math.max(8, insets.bottom) }]}>
       {ABAS.map(({ id, title, icon }) => (
-        <Pressable key={id} onPress={() => onSelect(id)} style={styles.item} accessibilityRole="button" accessibilityState={{ selected: selected === id }}>
-          <View style={[styles.icon, selected === id && styles.selected]}><Svg width={23} height={23} viewBox="0 0 24 24" fill="none"><Icone name={icon} /></Svg></View>
-          <Text style={[styles.text, selected === id && styles.bold]}>{title}</Text>
+        <Pressable
+          key={id}
+          onPress={() => onSelect(id)}
+          style={[styles.item, id === 'agenda' && styles.centralItem]}
+          accessibilityRole="button"
+          accessibilityLabel={title}
+          accessibilityState={{ selected: selected === id }}
+        >
+          {id === 'coletas' ? (
+            <>
+              <View style={[styles.icon, selected === id && styles.selected]}>
+                <MateriaisIcon width={23} height={23} />
+              </View>
+              <Text style={styles.text}>{title}</Text>
+            </>
+          ) : id === 'agenda' ? (
+            <View style={styles.centralOutline}>
+              <View style={styles.centralButton}>
+                <Svg width={23} height={23} viewBox="0 0 24 24" fill="none"><Icone name={icon} /></Svg>
+                <Text style={styles.centralText}>{title}</Text>
+              </View>
+            </View>
+          ) : (
+            <>
+              <View style={[styles.icon, selected === id && styles.selected]}>
+                <SolicitacoesIcon width={21} height={18} />
+              </View>
+              <Text style={styles.text}>{title}</Text>
+            </>
+          )}
         </Pressable>
       ))}
     </View>
@@ -35,10 +64,13 @@ export default function MenuAdmin({ selected, onSelect }) {
 }
 
 const styles = StyleSheet.create({
-  menu: { minHeight: 66, paddingTop: 5, paddingHorizontal: 8, flexDirection: 'row', justifyContent: 'space-around', backgroundColor: CORES.verde },
+  menu: { minHeight: 66, paddingTop: 5, paddingHorizontal: 8, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'flex-start', backgroundColor: CORES.verde, overflow: 'visible' },
   item: { flex: 1, minHeight: 54, alignItems: 'center', justifyContent: 'center', gap: 2 },
-  icon: { width: 48, height: 32, alignItems: 'center', justifyContent: 'center', borderRadius: 16 },
+  centralItem: { zIndex: 1, marginTop: -28 },
+  icon: { minWidth: 48, height: 32, alignItems: 'center', justifyContent: 'center', borderRadius: 16 },
   selected: { backgroundColor: '#7F9C08' },
-  text: { color: '#fff', fontSize: rem(0.75), fontFamily: 'Inter_400Regular' },
-  bold: { fontFamily: 'Inter_700Bold' },
+  centralOutline: { width: 82, height: 82, borderRadius: 41, borderWidth: 4, borderColor: CORES.branco, backgroundColor: CORES.branco, alignItems: 'center', justifyContent: 'center' },
+  centralButton: { width: '100%', height: '100%', borderRadius: 37, backgroundColor: CORES.verde, alignItems: 'center', justifyContent: 'center', gap: 2 },
+  centralText: { color: CORES.branco, fontSize: rem(1), fontFamily: 'Inter_400Regular' },
+  text: { color: '#fff', fontSize: rem(1.125), fontFamily: 'Inter_400Regular' },
 });

@@ -6,7 +6,8 @@ export default function AnaliseSolicitacaoScreen({ booking, onAccept, onDecline,
   if (!booking) return null;
   const materials = Array.isArray(booking.materiais) ? booking.materiais : [];
   const contactName = booking.solicitante?.nome || booking.nomeContribuinte || 'Solicitante';
-  const pending = !['aceito', 'recusado'].includes(booking.status);
+  const refused = ['recusado', 'rejected'].includes(booking.status);
+  const pending = !['aceito', 'recusado', 'rejected'].includes(booking.status);
   return (
     <Page onLogout={onLogout}>
       <Titulo title="Analisar solicitação" subtitle="Confira o endereço e os materiais antes de aceitar." />
@@ -15,7 +16,7 @@ export default function AnaliseSolicitacaoScreen({ booking, onAccept, onDecline,
           <AdminIcon name={booking.modalidade === 'domicilio' ? 'domicilio' : 'localizacao'} />
           <Text style={styles.muted}>{booking.modalidade === 'domicilio' ? 'Coleta em domicílio' : 'Entrega no ponto de coleta'}</Text>
         </View>
-        <Text style={{ color: pending ? '#D99A19' : '#6D8C09', fontFamily: 'Inter_700Bold' }}>{booking.coletaId ? 'Coletada' : pending ? 'Pendente' : booking.status === 'aceito' ? 'Aceita' : 'Recusada'}</Text>
+        <Text style={{ color: refused ? '#D32F2F' : pending ? '#D99A19' : '#6D8C09', fontFamily: 'Inter_700Bold' }}>{booking.coletaId ? 'Coletada' : pending ? 'Pendente' : booking.status === 'aceito' ? 'Aceita' : 'Recusada'}</Text>
       </View>
       <Text style={styles.sectionTitle}>Solicitante</Text>
       <View style={styles.card}><Text style={[styles.body, { fontFamily: 'Alexandria_700Bold' }]}>{contactName}</Text><Text style={[styles.body, { marginTop: 8 }]}>{booking.solicitante?.telefone || booking.telefoneContato || ''}</Text><Text style={[styles.muted, { marginTop: 8 }]}>Solicitação recebida em {formatarData(booking.criadoEm?.toDate?.()?.toISOString?.().slice(0, 10) || booking.data)}</Text></View>

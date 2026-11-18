@@ -28,6 +28,7 @@ import TelaMeusImoveis from './TelaMeusImoveis';
 import TelaAdicionarImovel from './TelaAdicionarImovel';
 import TelaAlterarSenha from './TelaAlterarSenha';
 import TelaComoReciclar from './TelaComoReciclar';
+import TelaComoFunciona from './TelaComoFunciona';
 import TelaSegurancaPrivacidade from './TelaSegurancaPrivacidade';
 import EstadoApi from '../components/EstadoApi';
 import { useApiData } from '../hooks/useApiData';
@@ -41,6 +42,7 @@ export default function TelaInicial({ onSair, sessao }) {
   const [telaAtual, setTelaAtual] = useState('inicio');
   const {
     data: coletas,
+    response: respostaColetas,
     error: erroColetas,
     loading: carregandoColetas,
     retry: recarregarColetas,
@@ -201,6 +203,10 @@ export default function TelaInicial({ onSair, sessao }) {
     return <TelaComoReciclar onVoltar={() => setTelaAtual('inicio')} />;
   }
 
+  if (telaAtual === 'como-funciona') {
+    return <TelaComoFunciona onVoltar={() => setTelaAtual('inicio')} />;
+  }
+
   return (
     <SafeAreaView
       style={styles.container}
@@ -225,9 +231,13 @@ export default function TelaInicial({ onSair, sessao }) {
           </Text>
 
           <CartaoProgresso
-            coletasRealizadas={
-              carregandoColetas || erroColetas ? null : coletas.length
+            progressoDesconto={
+              carregandoColetas || erroColetas
+                ? null
+                : respostaColetas?.progressoDesconto
             }
+            carregando={carregandoColetas}
+            erro={Boolean(erroColetas)}
           />
         </View>
 
@@ -285,7 +295,7 @@ export default function TelaInicial({ onSair, sessao }) {
               titulo="Como funciona?"
               descricao="Entenda como funciona o nosso aplicativo!"
               cor={CORES.amarelo}
-              onPress={() => setTelaAtual('tela-agendamento')}
+              onPress={() => setTelaAtual('como-funciona')}
             />
           </View>
         </View>

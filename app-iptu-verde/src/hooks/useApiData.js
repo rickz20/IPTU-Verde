@@ -3,6 +3,7 @@ import { apiRequest } from '../services/api';
 
 export function useApiData(path, responseKey, token, enabled = true) {
   const [data, setData] = useState([]);
+  const [response, setResponse] = useState(null);
   const [completedKey, setCompletedKey] = useState('');
   const [errorState, setErrorState] = useState({ key: '', message: '' });
   const [attempt, setAttempt] = useState(0);
@@ -21,6 +22,7 @@ export function useApiData(path, responseKey, token, enabled = true) {
       .then((result) => {
         if (active) {
           setData(result[responseKey] ?? []);
+          setResponse(result);
         }
       })
       .catch((requestError) => {
@@ -41,6 +43,7 @@ export function useApiData(path, responseKey, token, enabled = true) {
 
   return {
     data,
+    response,
     error: enabled
       ? errorState.key === requestKey
         ? errorState.message

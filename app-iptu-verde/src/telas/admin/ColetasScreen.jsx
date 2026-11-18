@@ -11,9 +11,7 @@ function diaISO(date) {
 }
 
 function alterarMes(date, delta) {
-  const firstDay = new Date(date.getFullYear(), date.getMonth() + delta, 1);
-  const day = Math.min(date.getDate(), new Date(firstDay.getFullYear(), firstDay.getMonth() + 1, 0).getDate());
-  return new Date(firstDay.getFullYear(), firstDay.getMonth(), day);
+  return new Date(date.getFullYear(), date.getMonth() + delta, 1);
 }
 
 export default function ColetasScreen({ coletas, pontos, loading, error, onRetry, onRegistrar, onLogout }) {
@@ -38,12 +36,28 @@ export default function ColetasScreen({ coletas, pontos, loading, error, onRetry
     <Page onLogout={onLogout}>
       <Titulo title="Coletas registradas" subtitle={firstPoint ? `${firstPoint.nome}, ${firstPoint.cidade || ''}` : 'Acompanhe os materiais recebidos.'} />
       <Botao title="+   Registrar coleta" onPress={onRegistrar} />
-      <View style={styles.row}>
-        <Pressable onPress={() => setSelectedDate((date) => alterarMes(date, -1))} accessibilityLabel="Mês anterior"><Text style={styles.title}>‹</Text></Pressable>
-        <Text style={[styles.body, { textTransform: 'capitalize', fontFamily: 'Inter_700Bold' }]}>{monthLabel}</Text>
-        <Pressable onPress={() => setSelectedDate((date) => alterarMes(date, 1))} accessibilityLabel="Próximo mês"><Text style={styles.title}>›</Text></Pressable>
+      <View style={[styles.row, { minHeight: 52, marginTop: 8, marginBottom: 4 }]}>
+        <Pressable
+          onPress={() => setSelectedDate((date) => alterarMes(date, -1))}
+          style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: '#F1F4DF', alignItems: 'center', justifyContent: 'center' }}
+          accessibilityRole="button"
+          accessibilityLabel="Mês anterior"
+          hitSlop={4}
+        >
+          <Text style={{ color: '#6D8C09', fontSize: 36, lineHeight: 40 }}>‹</Text>
+        </Pressable>
+        <Text style={[styles.body, { flex: 1, textAlign: 'center', textTransform: 'capitalize', fontFamily: 'Inter_700Bold' }]}>{monthLabel}</Text>
+        <Pressable
+          onPress={() => setSelectedDate((date) => alterarMes(date, 1))}
+          style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: '#F1F4DF', alignItems: 'center', justifyContent: 'center' }}
+          accessibilityRole="button"
+          accessibilityLabel="Próximo mês"
+          hitSlop={4}
+        >
+          <Text style={{ color: '#6D8C09', fontSize: 36, lineHeight: 40 }}>›</Text>
+        </Pressable>
       </View>
-      <View style={[styles.row, { marginTop: 8, marginBottom: 12 }]}>
+      <View style={[styles.row, { marginTop: 4, marginBottom: 12 }]}>
         {dias.map((date) => {
           const chosen = date.toDateString() === selectedDate.toDateString();
           return <Pressable key={date.toISOString()} onPress={() => setSelectedDate(date)} style={{ alignItems: 'center', flex: 1, paddingVertical: 6 }}>

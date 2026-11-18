@@ -2,6 +2,7 @@ import { rem } from '../utils/typography';
 import {
   Pressable,
   StatusBar,
+  Image,
   StyleSheet,
   Text,
   View,
@@ -9,7 +10,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import BotaoVoltar from '../components/BotaoVoltar';
-import LogoIptuVerde from '../../assets/logo iptuverde.svg';
 import { CORES } from '../components/telaInicial/tema';
 
 function IconeEmail() {
@@ -91,9 +91,11 @@ export default function TelaSegurancaPrivacidade({
           </Pressable>
         </View>
 
-        <LogoIptuVerde
+        <Image
+          source={require('../../assets/logo-iptu-verde.png')}
           style={styles.logo}
           accessibilityLabel="IPTU Verde"
+          resizeMode="contain"
         />
       </View>
     </SafeAreaView>
@@ -151,7 +153,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 120,
-    height: 40,
+    height: 55,
     alignSelf: 'center',
     marginTop: 'auto',
   },

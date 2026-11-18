@@ -9,8 +9,9 @@ const CIRCUNFERENCIA = 2 * Math.PI * RAIO;
 export default function ProgressoCircular({ percentual = null }) {
   const percentualValido =
     typeof percentual === 'number'
-      ? Math.min(100, Math.max(0, percentual))
+      ? Math.min(15, Math.max(0, percentual))
       : null;
+  const progresso = percentualValido === null ? null : percentualValido / 15;
 
   return (
     <View style={styles.circulo}>
@@ -23,7 +24,7 @@ export default function ProgressoCircular({ percentual = null }) {
           stroke="#DDDDDD"
           strokeWidth="9"
         />
-        {percentualValido !== null && percentualValido > 0 ? (
+        {progresso !== null && progresso > 0 ? (
           <Circle
             cx="47"
             cy="47"
@@ -33,7 +34,7 @@ export default function ProgressoCircular({ percentual = null }) {
             strokeWidth="9"
             strokeDasharray={CIRCUNFERENCIA}
             strokeDashoffset={
-              CIRCUNFERENCIA * (1 - percentualValido / 100)
+              CIRCUNFERENCIA * (1 - progresso)
             }
             strokeLinecap="round"
             rotation="-90"

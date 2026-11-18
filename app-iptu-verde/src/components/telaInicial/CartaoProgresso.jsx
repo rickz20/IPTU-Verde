@@ -3,14 +3,44 @@ import { StyleSheet, Text, View } from 'react-native';
 import ProgressoCircular from './ProgressoCircular';
 import { CORES } from './tema';
 
-export default function CartaoProgresso({ coletasRealizadas = null }) {
-  const percentualDesconto = coletasRealizadas === 0 ? 0 : null;
-  const textoColetas =
-    coletasRealizadas === null
+const formatarPeso = (peso) =>
+  new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 }).format(peso);
+
+export default function CartaoProgresso({
+  progressoDesconto = null,
+  carregando = false,
+  erro = false,
+}) {
+  const percentualDesconto = progressoDesconto?.percentualDesconto ?? null;
+  const percentualProgresso =
+    percentualDesconto === null ? null : (percentualDesconto / 15) * 100;
+  const textoProgresso = carregando
+    ? 'Calculando seu progresso...'
+    : erro || !progressoDesconto
       ? 'Não foi possível consultar seu histórico de coletas.'
-      : coletasRealizadas === 0
-        ? 'Nenhuma coleta registrada.'
-        : `${coletasRealizadas} ${coletasRealizadas === 1 ? 'coleta registrada' : 'coletas registradas'}.`;
+      : `${progressoDesconto.coletasValidas} ${
+          progressoDesconto.coletasValidas === 1 ? 'coleta' : 'coletas'
+        } e ${formatarPeso(progressoDesconto.pesoTotalKg)} kg em ${progressoDesconto.ano}.`;
+  const textoProximaFaixa = progressoDesconto?.proximaFaixa
+    ? `Próxima faixa: ${progressoDesconto.proximaFaixa.percentual}%. Faltam ${
+        [
+          progressoDesconto.proximaFaixa.faltamColetas > 0
+            ? `${progressoDesconto.proximaFaixa.faltamColetas} ${
+                progressoDesconto.proximaFaixa.faltamColetas === 1
+                  ? 'coleta'
+                  : 'coletas'
+              }`
+            : '',
+          progressoDesconto.proximaFaixa.faltamKg > 0
+            ? `${formatarPeso(progressoDesconto.proximaFaixa.faltamKg)} kg`
+            : '',
+        ]
+          .filter(Boolean)
+          .join(' e ')
+      }.`
+    : progressoDesconto
+      ? 'Você atingiu o desconto máximo de 15%.'
+      : 'O desconto anual pode chegar a 15%, conforme a quantidade de coletas e o peso recebido.';
 
   return (
     <View style={styles.cartaoProgresso}>
@@ -21,25 +51,24 @@ export default function CartaoProgresso({ coletasRealizadas = null }) {
           style={styles.barraFundo}
           accessibilityRole="progressbar"
           accessibilityValue={
-            percentualDesconto === null
+            percentualProgresso === null
               ? undefined
-              : { min: 0, max: 100, now: percentualDesconto }
+              : { min: 0, max: 15, now: percentualDesconto }
           }
         >
-          {percentualDesconto !== null ? (
+          {percentualProgresso !== null ? (
             <View
               style={[
                 styles.barraPreenchida,
-                { width: `${percentualDesconto}%` },
+                { width: `${percentualProgresso}%` },
               ]}
             />
           ) : null}
         </View>
         <Text style={styles.dicaProgresso}>
-          {textoColetas}
+          {textoProgresso}
           {'\n'}
-          O limite previsto é de até 15% de desconto no IPTU. A regra de cálculo
-          ainda será definida.
+          {textoProximaFaixa}
         </Text>
       </View>
     </View>
