@@ -1,5 +1,6 @@
 import { rem } from '../../utils/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import IconColeta from '../../../assets/Icon-coleta.svg';
 import { CORES } from './tema';
 
 export default function ItemColeta({ item, onPress = () => {} }) {
@@ -11,7 +12,7 @@ export default function ItemColeta({ item, onPress = () => {} }) {
       accessibilityLabel={`Coleta de ${item.nome}, ${item.data}`}
     >
       <View style={styles.avatarColeta}>
-        <Text style={styles.iconeUsuario}>♙</Text>
+        <IconColeta width={16} height={17} />
       </View>
 
       <View style={styles.dadosColeta}>
@@ -19,7 +20,9 @@ export default function ItemColeta({ item, onPress = () => {} }) {
 
         <View style={styles.linhaEndereco}>
           <Text style={styles.iconeLocalizacao}>●</Text>
-          <Text style={styles.enderecoColeta}>Endereço do ponto</Text>
+          <Text style={styles.enderecoColeta} numberOfLines={1}>
+            {item.endereco || 'Endereço não informado'}
+          </Text>
         </View>
       </View>
 
@@ -49,10 +52,6 @@ const styles = StyleSheet.create({
     backgroundColor: CORES.amarelo,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  iconeUsuario: {
-    fontSize: rem(1.5),
-    color: CORES.branco,
   },
   dadosColeta: {
     flex: 1,

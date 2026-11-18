@@ -13,6 +13,7 @@ import {
   createUserProperty,
   createUserBooking,
   findPointById,
+  findScheduleByPointId,
   listNotifications,
   listPoints,
   listBookedBookingSlots,
@@ -21,6 +22,7 @@ import {
   listUserProperties,
 } from '../repositories/appRepository.js';
 import { requireAuth } from '../middleware/requireAuth.js';
+import { getBusinessDate } from '../services/dateUtils.js';
 
 const router = Router();
 const loginLimiter = rateLimit({
@@ -59,6 +61,69 @@ const BOOKING_TIME_SLOTS = [
   '14:30',
 ];
 
+function getConfiguredTimeSlots(schedule) {
+  if (!schedule) {
+    return BOOKING_TIME_SLOTS;
+  }
+
+  const slots = [];
+  const [openingHour, openingMinute] = schedule.abertura.split(':').map(Number);
+  const [closingHour, closingMinute] = schedule.encerramento
+    .split(':')
+    .map(Number);
+  const [pauseStartHour, pauseStartMinute] = schedule.inicioPausa
+    .split(':')
+    .map(Number);
+  const [pauseEndHour, pauseEndMinute] = schedule.fimPausa
+    .split(':')
+    .map(Number);
+  const opening = openingHour * 60 + openingMinute;
+  const closing = closingHour * 60 + closingMinute;
+  const pauseStart = pauseStartHour * 60 + pauseStartMinute;
+  const pauseEnd = pauseEndHour * 60 + pauseEndMinute;
+
+  for (
+    let start = opening;
+    start + schedule.duracaoMinutos <= closing;
+    start += schedule.duracaoMinutos
+  ) {
+    const end = start + schedule.duracaoMinutos;
+    if (start < pauseEnd && end > pauseStart) {
+      continue;
+    }
+
+    slots.push(
+      `${String(Math.floor(start / 60)).padStart(2, '0')}:${String(
+        start % 60,
+      ).padStart(2, '0')}`,
+    );
+  }
+
+  return slots;
+}
+
+async function getScheduleForDate(pointId, date) {
+  const schedule = await findScheduleByPointId(pointId);
+  if (schedule?.datas) {
+    return {
+      schedule,
+      slots: schedule.datas.includes(date)
+        ? getConfiguredTimeSlots(schedule)
+        : [],
+    };
+  }
+  if (
+    schedule &&
+    !schedule.diasSemana.includes(
+      new Date(`${date}T00:00:00.000Z`).getUTCDay(),
+    )
+  ) {
+    return { schedule, slots: [] };
+  }
+
+  return { schedule, slots: getConfiguredTimeSlots(schedule) };
+}
+
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
@@ -71,7 +136,7 @@ function isValidFutureDate(date) {
   return (
     !Number.isNaN(parsed.getTime()) &&
     parsed.toISOString().slice(0, 10) === date &&
-    date >= new Date().toISOString().slice(0, 10)
+    date >= getBusinessDate()
   );
 }
 
@@ -346,11 +411,11 @@ router.get('/pontos-coleta', async (_request, response, next) => {
   }
 });
 
-router.get('/notificacoes', async (_request, response, next) => {
+router.get('/notificacoes', requireAuth, async (request, response, next) => {
   try {
     return response
       .status(200)
-      .json({ notificacoes: await listNotifications() });
+      .json({ notificacoes: await listNotifications(request.usuario.id) });
   } catch (error) {
     return next(error);
   }
@@ -390,12 +455,13 @@ router.get(
           .json({ erro: 'Ponto de coleta não encontrado.' });
       }
 
+      const { slots } = await getScheduleForDate(pontoId, data);
       const horariosOcupados = await listBookedBookingSlots(
         pontoId,
         data,
-        BOOKING_TIME_SLOTS,
+        slots,
       );
-      const horariosDisponiveis = BOOKING_TIME_SLOTS.filter(
+      const horariosDisponiveis = slots.filter(
         (horario) => !horariosOcupados.includes(horario),
       );
       return response.status(200).json({
@@ -427,7 +493,6 @@ router.post('/agendamentos', requireAuth, async (request, response, next) => {
       !/^\d{4}-\d{2}-\d{2}$/.test(data) ||
       typeof horario !== 'string' ||
       horario.trim().length > 80 ||
-      !BOOKING_TIME_SLOTS.includes(horario.trim()) ||
       ![10, 11].includes(telefoneDigits.length) ||
       !['ponto', 'domicilio'].includes(modalidade) ||
       (modalidade === 'domicilio' &&
@@ -454,6 +519,16 @@ router.post('/agendamentos', requireAuth, async (request, response, next) => {
     const point = await findPointById(pontoId);
     if (!point) {
       return response.status(404).json({ erro: 'Ponto de coleta não encontrado.' });
+    }
+
+    const { schedule, slots } = await getScheduleForDate(pontoId, data);
+    if (
+      !slots.includes(horario.trim()) ||
+      (schedule && !schedule.modalidades.includes(modalidade))
+    ) {
+      return response.status(400).json({
+        erro: 'O horário ou a modalidade não está disponível para este ponto e data.',
+      });
     }
 
     const agendamento = await createUserBooking(request.usuario.id, {

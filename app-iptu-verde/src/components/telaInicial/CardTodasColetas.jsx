@@ -36,30 +36,61 @@ function IconeLocalizacao() {
   );
 }
 
+function formatarData(data) {
+  if (typeof data !== 'string' || !data) return '';
+  const isoDate = data.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|T)/);
+  if (isoDate) return `${isoDate[3]}/${isoDate[2]}/${isoDate[1]}`;
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(data)) return data;
+  const parsedDate = new Date(data);
+  return Number.isNaN(parsedDate.getTime())
+    ? ''
+    : parsedDate.toLocaleDateString('pt-BR', { timeZone: 'America/Fortaleza' });
+}
+
+function valorMaterial(material) {
+  const peso = Number(material?.peso) || 0;
+  return material?.unidadePeso === 'g' ? peso / 1000 : peso;
+}
+
+function formatarPeso(peso) {
+  return Number(peso).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+}
+
 export default function CardTodasColetas({ coleta }) {
+  const materiais = Array.isArray(coleta.materiais) ? coleta.materiais : [];
+  const pesoTotal =
+    Number(coleta.pesoTotal) ||
+    materiais.reduce((total, material) => total + valorMaterial(material), 0);
+  const endereco = coleta.endereco || coleta.ponto || '';
+
   return (
     <View style={styles.card}>
       <IconeReciclagem />
 
       <View style={styles.detalhes}>
-        <Text style={styles.titulo}>
-          {coleta.quantidade} de {coleta.material} coletados!
-        </Text>
+        <Text style={styles.titulo}>Coleta registrada</Text>
         <Text style={styles.informacao}>
-          Entrega por <Text style={styles.destaque}>{coleta.entregador}</Text>
+          {materiais.length
+            ? materiais
+                .map((material) =>
+                  typeof material === 'string'
+                    ? material
+                    : material.descricao || material.categoria || material.material || 'Material',
+                )
+                .join(' · ')
+            : 'Materiais não detalhados'}
         </Text>
-        <Text style={styles.informacao}>
-          Coleta realizada por{' '}
-          <Text style={styles.destaque}>{coleta.responsavel}</Text>
-        </Text>
-        <View style={styles.linhaEndereco}>
-          <IconeLocalizacao />
-          <Text style={styles.endereco}>{coleta.endereco}</Text>
-        </View>
+        <Text style={styles.peso}>Peso total: {formatarPeso(pesoTotal)} kg</Text>
+        {endereco ? (
+          <View style={styles.linhaEndereco}>
+            <IconeLocalizacao />
+            <Text style={styles.endereco}>{endereco}</Text>
+          </View>
+        ) : null}
       </View>
 
       <View style={styles.data}>
-        <Text style={styles.textoData}>{coleta.data}</Text>
+        <Text style={styles.textoData}>{formatarData(coleta.data)}</Text>
         <Text style={styles.textoData}>{coleta.horario}</Text>
       </View>
     </View>
@@ -98,12 +129,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Alexandria_700Bold',
   },
   informacao: {
+    marginBottom: 4,
     color: CORES.texto,
     fontSize: rem(1),
     lineHeight: rem(1.25),
     fontFamily: 'Inter_400Regular',
   },
-  destaque: {
+  peso: {
+    marginTop: 2,
+    color: CORES.texto,
+    fontSize: rem(0.875),
+    lineHeight: rem(1.25),
     fontFamily: 'Inter_700Bold',
   },
   linhaEndereco: {
@@ -119,7 +155,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
   },
   data: {
-    minWidth: 52,
+    minWidth: 72,
     alignItems: 'flex-end',
   },
   textoData: {

@@ -546,7 +546,7 @@ export default function Login() {
       return <TelaInicial onSair={handleLogout} sessao={session} />;
     }
     if (session?.usuario?.tipo === 'adm') {
-      return <TelaAdmin onSair={handleLogout} usuario={session.usuario} />;
+      return <TelaAdmin onSair={handleLogout} usuario={session.usuario} sessao={session} />;
     }
   }
 

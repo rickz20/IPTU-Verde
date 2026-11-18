@@ -4,8 +4,9 @@ API Express com Firebase Admin. A API cobre autenticação, perfil, alteração 
 senha, pontos de coleta, agendamentos, histórico de coletas e notificações no
 Firestore. O cadastro público sempre cria `tipo: "pagador"`; contas com
 `tipo: "adm"` devem ser provisionadas manualmente por uma pessoa autorizada.
-O login aceita os dois tipos; até a tela administrativa ser implementada, o app
-confirma o login `adm` sem abrir a área de pagadores.
+O login aceita os dois tipos. Contas `adm` acessam o painel administrativo do
+aplicativo; os endpoints `/admin/*` exigem autenticação e verificam o tipo da
+conta no token.
 
 ## Preparar o Firebase
 
@@ -105,12 +106,19 @@ de dados pessoais; identifica a conta a partir do JWT.
 | `PATCH /auth/me` | autenticado | Atualizar nome, estado civil e/ou telefone |
 | `PATCH /auth/password` | autenticado | Alterar senha, validando a senha atual |
 | `GET /pontos-coleta` | público | Lista de pontos ativos/cadastrados |
-| `GET /notificacoes` | público | Avisos publicados |
+| `GET /notificacoes` | autenticado | Avisos públicos e notificações da conta atual |
 | `GET /agendamentos` | autenticado | Agendamentos da conta atual |
 | `GET /agendamentos/disponibilidade?pontoId=...&data=AAAA-MM-DD` | autenticado | Horários ocupados e disponíveis |
 | `POST /agendamentos` | autenticado | Criar agendamento |
 | `GET /coletas` | autenticado | Histórico da conta atual |
 | `GET /imoveis` | autenticado | Imóveis vinculados à conta atual |
+| `GET /admin/coletas` | administrador | Coletas registradas no município |
+| `POST /admin/coletas` | administrador | Registrar uma coleta com contato e materiais pesados |
+| `GET /admin/agendamentos` | administrador | Solicitações e agenda de todos os usuários |
+| `PATCH /admin/agendamentos/:id/decisao` | administrador | Aceitar ou recusar uma solicitação |
+| `GET /admin/pontos-coleta` | administrador | Pontos disponíveis para o painel |
+| `GET /admin/agenda/configuracao?pontoId=...` | administrador | Consultar horários e dias configurados |
+| `PUT /admin/agenda/configuracao` | administrador | Salvar os horários de atendimento de um ponto |
 
 Cadastre os documentos do Firestore para disponibilizar os dados. A tela não
 usa mais os arrays de demonstração:
@@ -127,10 +135,25 @@ usa mais os arrays de demonstração:
 - `imoveis/{id}`: `usuarioId` (ID do documento do usuário), `cep`, `rua`,
   `numero`, `endereco`, `bairro`, `complemento`, `inscricaoImobiliaria`,
   `vinculo` (`proprietario`, `inquilino` ou `residente`) e `criadoEm`.
+- `agendamentos/{id}` é consultado pelo painel administrativo e recebe as
+  decisões `aceito` ou `recusado`; recusas também salvam `motivoRecusa`.
+- Ao decidir uma solicitação, a API cria uma notificação privada com
+  `usuarioId`, `agendamentoId`, `tipo`, `titulo`, `descricao`, `data`,
+  `horario` e `lida`. O endpoint de notificações mantém os avisos públicos e
+  retorna notificações privadas somente para a conta autenticada.
+- `coletas/{id}` também armazena as coletas registradas pelo administrador:
+  `data`, `horario`, `nomeContribuinte`, `telefone`, `modalidade`, endereço,
+  `materiais` (categoria, descrição, peso e unidades), `pesoTotal` e
+  `registradoPor`.
+- `agendasAtendimento/{pontoId}` armazena a configuração por ponto: `datas`
+  (datas selecionadas no calendário), `diasSemana` (compatibilidade com agendas
+  recorrentes; 0=domingo a 6=sábado), `abertura`, `encerramento`, `inicioPausa`,
+  `fimPausa`, `duracaoMinutos` e `modalidades`. O nome da coleção pode ser
+  alterado com `FIRESTORE_SCHEDULES_COLLECTION`.
 
 A modalidade aceita `ponto` ou `domicilio`; modalidade domiciliar exige
 endereço, e materiais são enviados como uma lista de nomes. A data de
 agendamento usa `AAAA-MM-DD` e deve ser hoje ou futura.
-Para locais, avisos e coletas aparecerem no app, uma pessoa autorizada deve
-cadastrar seus documentos no Firestore. O backend ainda não tem painel nem
-endpoints administrativos para gerenciar pontos, avisos, coletas ou imóveis.
+O painel permite registrar coletas, acompanhar agenda e solicitações, decidir
+pedidos e configurar o atendimento. Pontos de coleta continuam sendo
+cadastrados diretamente no Firestore por uma pessoa autorizada.

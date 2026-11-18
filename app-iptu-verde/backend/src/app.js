@@ -2,6 +2,7 @@ import './config/env.js';
 import cors from 'cors';
 import express from 'express';
 import authRoutes from './routes/authRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 const app = express();
 const configuredOrigins = process.env.CORS_ORIGIN
@@ -25,6 +26,7 @@ app.get('/health', (_request, response) => {
 });
 
 app.use(authRoutes);
+app.use('/admin', adminRoutes);
 
 app.use((error, _request, response, _next) => {
   if (error.statusCode === 409) {

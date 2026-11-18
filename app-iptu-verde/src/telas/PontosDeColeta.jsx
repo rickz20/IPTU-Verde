@@ -518,6 +518,9 @@ export default function PontosDeColeta({
                         Não foi possível carregar os horários. Confira sua
                         conexão e tente novamente.
                       </Text>
+                      <Text style={styles.mensagemDisponibilidade}>
+                        {erroDisponibilidade}
+                      </Text>
                       <Pressable
                         onPress={() =>
                           void consultarDisponibilidade(

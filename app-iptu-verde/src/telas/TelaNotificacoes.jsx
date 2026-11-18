@@ -21,13 +21,13 @@ import { CORES } from '../components/telaInicial/tema';
 import { useApiData } from '../hooks/useApiData';
 
 // Criando a tela principal de notificações
-export default function TelaNotificacoes({ onVoltar }) {
+export default function TelaNotificacoes({ onVoltar, token }) {
   const {
     data: notificacoes,
     error,
     loading,
     retry,
-  } = useApiData('/notificacoes', 'notificacoes');
+  } = useApiData('/notificacoes', 'notificacoes', token, Boolean(token));
 
   // Renderizando a estrutura da tela
   return (
@@ -84,7 +84,7 @@ export default function TelaNotificacoes({ onVoltar }) {
                     titulo={notificacao.titulo}
                     descricao={notificacao.descricao}
                     data={notificacao.data}
-                    horario={notificacao.horario}
+                    criadoEm={notificacao.criadoEm}
                   />
                 ))
               : null}

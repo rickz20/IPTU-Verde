@@ -15,12 +15,38 @@ import Icone from '../Icone';
 // Importando as cores padronizadas do projeto
 import { CORES } from '../telaInicial/tema';
 
+function formatarData(data) {
+  if (!data) return '';
+
+  if (typeof data === 'string') {
+    const isoDate = data.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|T)/);
+    if (isoDate) {
+      return `${isoDate[3]}/${isoDate[2]}/${isoDate[1]}`;
+    }
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(data)) return data;
+  }
+
+  let date = data;
+  if (typeof data?.toDate === 'function') {
+    date = data.toDate();
+  } else if (typeof data === 'object') {
+    const seconds = data.seconds ?? data._seconds;
+    if (Number.isFinite(seconds)) date = new Date(seconds * 1000);
+  }
+
+  const parsedDate = date instanceof Date ? date : new Date(date);
+  if (Number.isNaN(parsedDate.getTime())) return '';
+  return parsedDate.toLocaleDateString('pt-BR', {
+    timeZone: 'America/Fortaleza',
+  });
+}
+
 // Criando o componente reutilizável de notificação
 export default function CardNotificacao({
   titulo,
   descricao,
   data,
-  horario,
+  criadoEm,
 }) {
 
   // Renderizando as informações da notificação
@@ -53,19 +79,11 @@ export default function CardNotificacao({
               {titulo}
             </Text>
 
-            {/* Organizando a data e o horário */}
+            {/* Exibindo a data */}
             <View style={styles.dataHora}>
-
-              {/* Exibindo a data */}
-              <Text style={styles.textoData}>
-                {data}
+              <Text style={styles.textoData} numberOfLines={1}>
+                {formatarData(data || criadoEm)}
               </Text>
-
-              {/* Exibindo o horário */}
-              <Text style={styles.textoData}>
-                {horario}
-              </Text>
-
             </View>
 
           </View>
@@ -137,7 +155,7 @@ const styles = StyleSheet.create({
 
   // Posicionando a data e o horário à direita
   dataHora: {
-    width: 43,
+    width: 82,
     alignItems: 'flex-end',
   },
 

@@ -47,7 +47,7 @@ export default function TelaInicial({ onSair, sessao }) {
   } = useApiData('/coletas', 'coletas', sessao?.token, Boolean(sessao?.token));
   const {
     data: notificacoes,
-  } = useApiData('/notificacoes', 'notificacoes');
+  } = useApiData('/notificacoes', 'notificacoes', sessao?.token, Boolean(sessao?.token));
 
   function selecionarAba(aba) {
     setAbaSelecionada(aba);
@@ -191,6 +191,7 @@ export default function TelaInicial({ onSair, sessao }) {
   if (telaAtual === 'notificacoes') {
     return (
       <TelaNotificacoes
+        token={sessao?.token}
         onVoltar={() => setTelaAtual('inicio')}
       />
     );
@@ -262,6 +263,7 @@ export default function TelaInicial({ onSair, sessao }) {
                         'Coleta realizada',
                       data: formatarDataColeta(coleta.data),
                       horario: coleta.horario ?? '',
+                      endereco: coleta.endereco ?? coleta.ponto ?? '',
                     }}
                   />
                 ))
